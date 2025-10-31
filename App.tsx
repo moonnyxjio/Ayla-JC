@@ -7,10 +7,12 @@ import QuizScreen from './components/QuizScreen';
 import CertificationScreen from './components/CertificationScreen';
 import AdminScreen from './components/AdminScreen';
 import ProfileScreen from './components/ProfileScreen';
+import ApiKeyErrorScreen from './components/ApiKeyErrorScreen';
 import { stories } from './data/stories';
 import type { Story, QuizResult, View, UserProfile, ProgressData } from './types';
 
 const App: React.FC = () => {
+  const [apiKeyIsMissing, setApiKeyIsMissing] = useState(false);
   const [view, setView] = useState<View>('profiles');
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
@@ -21,8 +23,19 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [progressData, setProgressData] = useState<ProgressData>({});
 
+  // Check for API key on mount
+  useEffect(() => {
+    // In a browser environment without a build tool, `process` might not be defined.
+    // This check prevents the app from crashing if the API_KEY is not available.
+    if (typeof process === 'undefined' || !process.env.API_KEY) {
+      console.error("API_KEY environment variable not set!");
+      setApiKeyIsMissing(true);
+    }
+  }, []);
+
   // Load profiles from localStorage on initial render
   useEffect(() => {
+    if (apiKeyIsMissing) return; // Don't run if API key is missing
     try {
       const storedProfiles = JSON.parse(localStorage.getItem('profiles') || '[]');
       setProfiles(storedProfiles);
@@ -37,7 +50,7 @@ const App: React.FC = () => {
       console.error("Failed to load profiles from local storage", e);
       setProfiles([]);
     }
-  }, []);
+  }, [apiKeyIsMissing]);
 
   const handleSelectProfile = (profile: UserProfile) => {
     setCurrentUser(profile);
@@ -168,7 +181,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-sky-100 font-sans p-4 sm:p-6 md:p-8">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 relative">
-        {renderView()}
+        {apiKeyIsMissing ? <ApiKeyErrorScreen /> : renderView()}
       </div>
     </div>
   );

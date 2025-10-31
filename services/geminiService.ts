@@ -1,8 +1,21 @@
 
 import { GoogleGenAI, Modality, Type } from '@google/genai';
-import type { SentenceAnalysisData, WordAnalyses } from '../types';
+import type { SentenceAnalysisData, WordAnalyses, QuizResult } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+let ai: GoogleGenAI | null = null;
+
+const getAiClient = () => {
+    if (!ai) {
+        // The check in App.tsx should prevent this from being called if API_KEY is missing.
+        // This is a fallback to prevent a crash if called directly when the key isn't set.
+        if (!process.env.API_KEY) {
+            throw new Error("API Key not found. Please set the API_KEY environment variable.");
+        }
+        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    }
+    return ai;
+};
+
 
 // Shortened the list to analyze more words, as requested.
 const EXCLUDED_WORDS_LIST = ['a', 'an', 'the'];
@@ -20,6 +33,7 @@ export const analyzeSentencesForDay = async (sentences: string[], storyId: strin
     }
 
     try {
+        const aiClient = getAiClient();
         const sentencesObjectForPrompt = sentences.map((sentence, index) => {
             const wordsInSentence = [...new Set(sentence.replace(/[.,?!"]/g, '').toLowerCase().split(' ').filter(word => word && !EXCLUDED_WORDS_LIST.includes(word)))];
             return `{ "id": ${index}, "sentence": "${sentence.replace(/"/g, '\\"')}", "wordsToAnalyze": ["${wordsInSentence.join('", "')}"] }`;
@@ -55,7 +69,7 @@ Example response format:
 }
 `;
 
-        const response = await ai.models.generateContent({
+        const response = await aiClient.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
             config: {
@@ -99,7 +113,8 @@ Example response format:
 
 export const getSpeech = async (text: string): Promise<string | null> => {
     try {
-        const response = await ai.models.generateContent({
+        const aiClient = getAiClient();
+        const response = await aiClient.models.generateContent({
             model: "gemini-2.5-flash-preview-tts",
             contents: [{ parts: [{ text: text }] }],
             config: {
@@ -121,5 +136,41 @@ export const getSpeech = async (text: string): Promise<string | null> => {
  {
         console.error("Error generating speech:", error);
         return null;
+    }
+};
+
+export const generatePersonalizedFeedback = async (result: QuizResult): Promise<string> => {
+    try {
+        const aiClient = getAiClient();
+        
+        const performanceSummary = `
+- Overall Score: ${Math.round((result.score / result.totalQuestions) * 100)}% (${result.score}/${result.totalQuestions})
+- Spelling: ${result.spellingScore.correct}/${result.spellingScore.total} correct.
+- Sentence Scramble: ${result.scrambleScore.correct}/${result.scrambleScore.total} correct.
+- Reading Aloud: ${result.readingScore.correct}/${result.readingScore.total} correct.
+- Mistakes were made on these words/sentences: ${result.incorrectAnswers.map(ans => ans.correctAnswer).join(', ')}
+        `;
+
+        const prompt = `You are a kind, encouraging English teacher for a young child named ${result.studentName}.
+The child has just completed a quiz for Day ${result.day} of the story "${result.storyTitle}".
+Here is their performance summary:
+${performanceSummary}
+
+Based on this, write a short, personalized, and encouraging feedback message for ${result.studentName} in Korean. 
+The tone should be very positive and warm.
+Focus on what they did well, and gently suggest what to focus on next time if they made mistakes.
+Keep it under 50 words. Do not use markdown. Just provide the plain text message.
+`;
+
+        const response = await aiClient.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+
+        return response.text.trim();
+
+    } catch (error) {
+        console.error("Error generating personalized feedback:", error);
+        return `${result.studentName} 학생, 정말 열심히 했어요! 다음 학습도 기대할게요. 참 잘했어요!`;
     }
 };

@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import type { QuizResult } from '../types';
+import { generatePersonalizedFeedback } from '../services/geminiService';
 
 // Let TypeScript know that html2canvas is available on the window object
 declare const html2canvas: any;
@@ -15,6 +16,20 @@ const CertificationScreen: React.FC<CertificationScreenProps> = ({ result, onSav
   const [isSaved, setIsSaved] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
   const studentName = result.studentName;
+
+  const [feedback, setFeedback] = useState<string>('');
+  const [isFeedbackLoading, setIsFeedbackLoading] = useState(true);
+
+  useEffect(() => {
+    const getFeedback = async () => {
+      setIsFeedbackLoading(true);
+      const message = await generatePersonalizedFeedback(result);
+      setFeedback(message);
+      setIsFeedbackLoading(false);
+    };
+    
+    getFeedback();
+  }, [result]);
 
   const handleSave = () => {
     onSaveProgress(result);
@@ -64,6 +79,18 @@ const CertificationScreen: React.FC<CertificationScreenProps> = ({ result, onSav
               {result.readingScore.total > 0 && <li>따라 읽기 퀴즈: {result.readingScore.correct} / {result.readingScore.total}</li>}
             </ul>
           </div>
+
+          <div>
+            <p><strong className="w-32 inline-block">AI 선생님의 한마디:</strong></p>
+            <div className="mt-2 p-4 bg-sky-50 rounded-lg border border-sky-200">
+              {isFeedbackLoading ? (
+                <p className="text-gray-500 italic">선생님께서 코멘트를 작성하고 있어요...</p>
+              ) : (
+                <p className="text-sky-800 font-medium whitespace-pre-wrap">{feedback}</p>
+              )}
+            </div>
+          </div>
+          
           {result.incorrectAnswers.length > 0 && (
             <div>
               <p><strong className="w-32 inline-block">틀린 문제:</strong></p>
