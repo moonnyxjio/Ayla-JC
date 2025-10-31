@@ -1,0 +1,7 @@
+{
+  "name": "English Fairy Tale Learner",
+  "description": "An interactive application that helps children learn English by breaking down fairy tales into words, sounds, phonics, and sentence structures. Includes quizzes and progress tracking.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
