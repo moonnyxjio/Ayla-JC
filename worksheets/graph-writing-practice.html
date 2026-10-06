@@ -1,0 +1,249 @@
+<title>Lesson 7 그래프 서술 연습</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column like a printed 학습지 — 공식표 → 그래프 탭 → 빈칸 6줄 → 모범답안 → 체크리스트 */
+:root{
+  --bg:#f3f6f4; --paper:#ffffff; --ink:#1c2621; --muted:#5d6b64; --line:#d5ddd8;
+  --accent:#2f62c9; --accent-soft:#e6edfb; --mark:#eef56a; --ok:#1e7a4c; --ok-soft:#e2f3ea; --bad:#b4372f; --bad-soft:#fbe7e5;
+  --display:"Gowun Batang",serif; --body:"Noto Sans KR",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121815; --paper:#1a221e; --ink:#e4ebe7; --muted:#9aa9a1; --line:#2f3a35;
+  --accent:#7fa6f2; --accent-soft:#1f2b44; --mark:#5b6120; --ok:#6fd19d; --ok-soft:#173326; --bad:#f08a80; --bad-soft:#3a1d1a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121815; --paper:#1a221e; --ink:#e4ebe7; --muted:#9aa9a1; --line:#2f3a35;
+  --accent:#7fa6f2; --accent-soft:#1f2b44; --mark:#5b6120; --ok:#6fd19d; --ok-soft:#173326; --bad:#f08a80; --bad-soft:#3a1d1a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.65}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:28px}
+h1,h2{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(24px,5vw,32px)}
+h2{font-size:21px}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+.hl{background:var(--mark);padding:0 .2em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:3px 12px;font-size:13px}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.note{font-size:13.5px;color:var(--muted)}
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:500;white-space:nowrap}
+.en{font-family:var(--mono);font-size:13.5px}
+.slot{color:var(--accent);font-weight:500}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:6px 14px;border-radius:4px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button{font:inherit;cursor:pointer}
+.btn{font-size:13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:4px 10px;border-radius:4px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);font-size:14px;padding:7px 16px}
+.btn:focus-visible,.tab:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg text{fill:var(--muted);font-family:var(--body)}
+svg .val{fill:var(--ink);font-weight:500}
+svg .ttl{fill:var(--ink);font-weight:700}
+.items{display:flex;flex-direction:column;gap:14px}
+.item{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.item-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.no{font-family:var(--display);font-size:18px;color:var(--accent)}
+.ko{font-weight:500}
+.tag{font-size:12px;background:var(--mark);padding:1px 8px;border-radius:3px}
+.ctx{font-family:var(--mono);font-size:13.5px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.ctx input{flex:1 1 260px;min-width:0;font-family:var(--mono);font-size:15px;padding:7px 9px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink)}
+.ctx input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.ctx input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.count{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.count.match{color:var(--ok)}
+.fb{font-size:13.5px}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.scr{display:flex;flex-wrap:wrap;gap:6px}
+.scr span{font-family:var(--mono);font-size:13px;border:1px dashed var(--muted);padding:1px 8px;border-radius:3px}
+.reveal{font-family:var(--mono);font-size:13.5px;background:var(--accent-soft);padding:6px 10px;border-radius:4px}
+.score{font-family:var(--display);font-size:20px}
+.passage{font-family:var(--mono);font-size:14px;line-height:2;background:var(--bg);padding:14px;border-radius:4px}
+.passage b{color:var(--accent);font-family:var(--display)}
+.passage u{text-decoration-thickness:2px;text-underline-offset:3px}
+.passage .gram{background:var(--mark)}
+ul.check{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+</style>
+
+<div class="wrap">
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <p class="eyebrow">3학년 2학기 영어 서술쓰기 · Lesson 7 Technology in Our Lives</p>
+    <h1>그래프를 설명하는 글 쓰기 연습지</h1>
+    <div class="chips">
+      <span class="chip">평가 <span class="hl">10월 7일(수)·8일(목)</span></span>
+      <span class="chip">작성 30분</span>
+      <span class="chip">반영 20% · 총 20점</span>
+      <span class="chip">문항당 부분점수 없음</span>
+    </div>
+    <p class="note">당일에는 <b>처음 보는 그래프 1개</b>가 나온다. 문장 틀은 수업 예시와 같고, 바뀌는 건 <b>동사구</b>와 <b>시간 범위</b>뿐이다. 그래서 틀을 외우고 칸만 갈아 끼우는 연습을 한다.</p>
+  </header>
+
+  <section class="sheet" aria-labelledby="s1">
+    <h2 id="s1">1. 문장 공식 6줄</h2>
+    <p class="note"><span class="slot">[동사]</span> = 그래프 제목의 활동을 과거형으로 (exercised, played computer games …). <span class="slot">[범위]</span> = 막대 아래 시간 구간.</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>번호</th><th>영어 틀 (밑줄 부분)</th><th>단어 수</th><th>앞뒤 고정 문구</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td class="en">We asked 100 teenagers about the average time teenagers <span class="slot">[동사]</span> per day</td><td class="num">11 + 동사</td><td>문장 끝 마침표</td></tr>
+        <tr><td>②</td><td class="en"><u>Looking at the results</u></td><td class="num">4</td><td>분사구문(조건). 답안지에 밑줄</td></tr>
+        <tr><td>③</td><td class="en">they <span class="slot">[동사]</span> for <span class="slot">[1위 범위]</span> per day</td><td class="num">4 + 동사 + 범위</td><td>__% said that</td></tr>
+        <tr><td>④</td><td class="en">they <span class="slot">[동사]</span> for <span class="slot">[2위 범위]</span> per day</td><td class="num">4 + 동사 + 범위</td><td>__% answered that</td></tr>
+        <tr><td>⑤</td><td class="en">they <span class="slot">[동사]</span> for <span class="slot">[3위 범위]</span> per day</td><td class="num">4 + 동사 + 범위</td><td>However, __% said that</td></tr>
+        <tr><td>⑥</td><td class="en"><u>As</u> the amount of time teenagers <span class="slot">[동사]</span> increases</td><td class="num">7 + 동사</td><td>접속사 As. 답안지에 밑줄</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">범위 단어 수 예시: <span class="en">1 to 2 hours</span> = 4 · <span class="en">30 minutes to 1 hour</span> = 5 · <span class="en">4 hours or more</span> = 4 · <span class="en">less than 30 minutes</span> = 4. 숫자는 한 단어로 센다.</p>
+  </section>
+
+  <section class="sheet" aria-labelledby="s2">
+    <h2 id="s2">2. 빈칸 ①~⑥ 직접 쓰기</h2>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div id="chart" class="tbl-wrap"></div>
+    <div class="items" id="items"></div>
+    <div class="row">
+      <button class="btn primary" id="grade">채점하기</button>
+      <button class="btn" id="clear">지우기</button>
+      <span class="score" id="score" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <section class="sheet" aria-labelledby="s3">
+    <h2 id="s3">3. 모범 답안 전체 글</h2>
+    <div class="row"><button class="btn" id="toggleP">답안 보기</button><span class="note">노란 표시 = 답안지에 밑줄 칠 어법 부분</span></div>
+    <div class="passage" id="passage" hidden></div>
+  </section>
+
+  <section class="sheet" aria-labelledby="s4">
+    <h2 id="s4">4. 시험 직전 체크리스트</h2>
+    <ul class="check">
+      <li>① 에 <span class="en">teenagers</span>가 <b>두 번</b> 나온다: <span class="en">100 teenagers … time teenagers</span></li>
+      <li>철자 함정: <span class="en">average · teenagers · exercised · results · percentage · computer · amount · increases</span></li>
+      <li>③④⑤ 순서는 <b>막대가 큰 순서</b> (1위 → 2위 → 3위).</li>
+      <li>③④⑤ 끝은 항상 <span class="en">per day</span>. 시간은 <span class="en">for</span> 뒤에.</li>
+      <li>⑥ 은 <span class="en">teenagers + 과거형 동사</span> 다음에 현재형 <span class="en">increases</span>.</li>
+      <li>② <span class="en">Looking at the results</span>, ⑥ <span class="en">As …</span> 부분에 <b>밑줄</b> 치기 (조건 4·5).</li>
+      <li>단어 수를 문항마다 세서 적기 (조건 3). 대소문자는 채점 안 함.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+const AX_MIN=[["less than 30 minutes","30분 미만"],["30 minutes to 1 hour","30분에서 1시간"],["1 to 2 hours","1시간에서 2시간"],["2 to 3 hours","2시간에서 3시간"],["3 hours or more","3시간 이상"]];
+const AX_HR=[["less than 1 hour","1시간 미만"],["1 to 2 hours","1시간에서 2시간"],["2 to 3 hours","2시간에서 3시간"],["3 to 4 hours","3시간에서 4시간"],["4 hours or more","4시간 이상"]];
+const AX_SLEEP=[["less than 5 hours","5시간 미만"],["5 to 6 hours","5시간에서 6시간"],["6 to 7 hours","6시간에서 7시간"],["7 to 8 hours","7시간에서 8시간"],["8 hours or more","8시간 이상"]];
+const END_INC="the percentage of teenagers in that category also increases.";
+const END_DEC="the percentage of teenagers in that category decreases.";
+const endPeak=r=>`the percentage of teenagers generally decreases after reaching its peak at ${r}.`;
+
+const FIXED={
+  g1:{label:"Graph 1 · 운동 (수업)",act:"exercised",ko:"운동을 했다",rel:"운동을 했던",axis:AX_MIN,vals:[15,35,25,15,10],picks:[1,2,3],ending:endPeak("30 minutes to 1 hour")},
+  g2:{label:"Graph 2 · 게임 (수업)",act:"played computer games",ko:"컴퓨터 게임을 했다",rel:"컴퓨터 게임을 했던",axis:AX_HR,vals:[10,15,20,25,30],picks:[4,3,2],ending:END_INC},
+};
+const ACTS=[
+  ["exercised","운동을 했다","운동을 했던"],["played computer games","컴퓨터 게임을 했다","컴퓨터 게임을 했던"],
+  ["slept","잠을 잤다","잠을 잤던"],["used smartphones","스마트폰을 사용했다","스마트폰을 사용했던"],
+  ["read books","책을 읽었다","책을 읽었던"],["watched TV","TV를 시청했다","TV를 시청했던"],
+  ["studied English","영어를 공부했다","영어를 공부했던"],["listened to music","음악을 들었다","음악을 들었던"],
+  ["watched videos","동영상을 봤다","동영상을 봤던"],["used social media","SNS를 사용했다","SNS를 사용했던"]];
+const SETS=[[5,10,20,30,35],[5,10,15,30,40],[10,15,20,25,30],[5,15,20,25,35],[5,10,20,25,40]];
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+
+function randomGraph(){
+  const [act,ko,rel]=pick(ACTS);
+  const axis=act==="slept"?AX_SLEEP:(Math.random()<.5?AX_MIN:AX_HR);
+  const d=[...pick(SETS)].sort((a,b)=>b-a);
+  const shape=pick(["inc","dec","peak"]);
+  let vals,ending;
+  if(shape==="inc"){vals=[...d].reverse();ending=END_INC}
+  else if(shape==="dec"){vals=[...d];ending=END_DEC}
+  else{const p=pick([1,2]);vals=Array(5);vals[p]=d[0];let k=1;for(let i=p+1;i<5;i++)vals[i]=d[k++];const rest=d.slice(k).sort((a,b)=>a-b);for(let i=0;i<p;i++)vals[i]=rest[i];ending=endPeak(axis[p][0])}
+  const picks=vals.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).slice(0,3).map(x=>x[1]);
+  return {label:"랜덤 새 그래프",act,ko,rel,axis,vals,picks,ending,random:true};
+}
+
+const titleOf=g=>"The Average Time Teenagers "+g.act.split(" ").map(w=>w==="to"?w:(w==="TV"?w:w[0].toUpperCase()+w.slice(1))).join(" ")+" per Day";
+
+function itemsOf(g){
+  const r=i=>g.axis[g.picks[i]], v=i=>g.vals[g.picks[i]];
+  return [
+    {n:"①",ko:`우리는 100명의 10대들에게 10대들이 하루에 ${g.rel} 평균 시간에 대해 물었다.`,pre:"",post:".",ans:`We asked 100 teenagers about the average time teenagers ${g.act} per day`},
+    {n:"②",ko:"그 결과들을 본다면,",tag:"분사구문 · 조건(~한다면)",pre:"",post:",",ans:"Looking at the results"},
+    {n:"③",ko:`그들은 하루에 ${r(0)[1]} 동안 ${g.ko}.`,pre:`${v(0)}% said that`,post:".",ans:`they ${g.act} for ${r(0)[0]} per day`},
+    {n:"④",ko:`그들은 하루에 ${r(1)[1]} 동안 ${g.ko}.`,pre:`${v(1)}% answered that`,post:".",ans:`they ${g.act} for ${r(1)[0]} per day`},
+    {n:"⑤",ko:`그들은 하루에 ${r(2)[1]} 동안 ${g.ko}.`,pre:`However, ${v(2)}% said that`,post:".",ans:`they ${g.act} for ${r(2)[0]} per day`},
+    {n:"⑥",ko:`10대들이 ${g.rel} 시간의 양이 증가함에 따라,`,tag:"접속사 As · ~함에 따라",pre:"",post:", "+g.ending,ans:`As the amount of time teenagers ${g.act} increases`},
+  ];
+}
+
+const norm=s=>s.toLowerCase().replace(/[.,!?]+$/,"").replace(/\s+/g," ").trim();
+const wc=s=>s.trim()?s.trim().split(/\s+/).length:0;
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function chartSVG(g){
+  const W=560,H=280,L=40,R=12,T=40,B=56,max=g.vals.some(v=>v>40)?50:40;
+  const pw=W-L-R,ph=H-T-B,bw=pw/5,y=v=>T+ph-(v/max)*ph;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;display:block" role="img" aria-label="${esc(titleOf(g))}">`;
+  s+=`<text class="ttl" x="${W/2}" y="20" text-anchor="middle" font-size="14">${esc(titleOf(g))}</text>`;
+  for(let t=0;t<=max;t+=10){s+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${L-8}" y="${y(t)+4}" text-anchor="end" font-size="11">${t}</text>`}
+  g.vals.forEach((v,i)=>{
+    const x=L+i*bw+bw*.28,w=bw*.44,yt=y(v),h=T+ph-yt;
+    s+=`<g><title>${esc(g.axis[i][0])}: ${v}%</title><path d="M${x},${T+ph}V${yt+4}q0,-4 4,-4h${w-8}q4,0 4,4V${T+ph}Z" fill="var(--accent)"/>`;
+    s+=`<text class="val" x="${x+w/2}" y="${yt-6}" text-anchor="middle" font-size="12">${v}%</text></g>`;
+    const words=g.axis[i][0].split(" "),lines=[];let cur="";
+    words.forEach(wd=>{if((cur+" "+wd).trim().length>11&&cur){lines.push(cur);cur=wd}else cur=(cur+" "+wd).trim()});lines.push(cur);
+    lines.forEach((ln,j)=>s+=`<text x="${L+i*bw+bw/2}" y="${T+ph+16+j*13}" text-anchor="middle" font-size="11">${esc(ln)}</text>`);
+  });
+  s+=`<text x="12" y="${T+ph/2}" font-size="11" transform="rotate(-90 12 ${T+ph/2})" text-anchor="middle">%</text></svg>`;
+  return s;
+}
+
+let current="g1",graph=FIXED.g1;
+const tabsEl=document.getElementById("tabs");
+[["g1",FIXED.g1.label],["g2",FIXED.g2.label],["rand","랜덤 새 그래프 ↻"]].forEach(([k,l])=>{
+  const b=document.createElement("button");b.className="tab";b.setAttribute("role","tab");b.textContent=l;b.dataset.k=k;
+  b.onclick=()=>{current=k;graph=k==="rand"?randomGraph():FIXED[k];render()};tabsEl.appendChild(b);
+});
+
+function render(){
+  tabsEl.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.k===current));
+  document.getElementById("chart").innerHTML=chartSVG(graph)+(graph.random?`<p class="note" style="margin-top:6px">연습용으로 만든 가상 그래프. 탭을 다시 누르면 다른 활동·모양으로 바뀐다.</p>`:"");
+  const its=itemsOf(graph);
+  document.getElementById("items").innerHTML=its.map((it,i)=>`
+    <div class="item">
+      <div class="item-head"><span class="no">${it.n}</span><span class="ko">${esc(it.ko)}</span>${it.tag?`<span class="tag">${it.tag}</span>`:""}<span class="count" id="c${i}">0 / ${wc(it.ans)}단어</span></div>
+      <label class="ctx" for="in${i}">${it.pre?`<span>${esc(it.pre)}</span>`:""}<input id="in${i}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${it.n} 영어로 쓰기"><span>${esc(it.post.length>2?it.post.slice(0,1)+" …":it.post)}</span></label>
+      <div class="row"><button class="btn" data-h="${i}">힌트: 단어 섞기</button><button class="btn" data-a="${i}">정답 보기</button><span class="fb" id="f${i}"></span></div>
+      <div id="x${i}"></div>
+    </div>`).join("");
+  its.forEach((it,i)=>{
+    const inp=document.getElementById("in"+i),c=document.getElementById("c"+i),target=wc(it.ans);
+    inp.oninput=()=>{const n=wc(inp.value);c.textContent=`${n} / ${target}단어`;c.classList.toggle("match",n===target);inp.className="";document.getElementById("f"+i).textContent=""};
+  });
+  document.querySelectorAll("[data-h]").forEach(b=>b.onclick=()=>{const i=+b.dataset.h;const w=its[i].ans.split(" ").sort(()=>Math.random()-.5);document.getElementById("x"+i).innerHTML=`<div class="scr">${w.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`});
+  document.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const i=+b.dataset.a;document.getElementById("x"+i).innerHTML=`<div class="reveal">${esc(its[i].ans)}</div>`});
+  document.getElementById("score").textContent="";
+  const pas=its.map(it=>{const a=(it.n==="②"||it.n==="⑥")?`<span class="gram">${esc(it.ans)}</span>`:esc(it.ans);return `${it.pre?esc(it.pre)+" ":""}<b>${it.n}</b><u>${a}</u>${esc(it.post)}`}).join(" ");
+  document.getElementById("passage").innerHTML=pas;
+}
+
+document.getElementById("grade").onclick=()=>{
+  const its=itemsOf(graph);let ok=0;
+  its.forEach((it,i)=>{
+    const inp=document.getElementById("in"+i),f=document.getElementById("f"+i),u=norm(inp.value),a=norm(it.ans);
+    if(!u){inp.className="bad";f.className="fb bad";f.textContent="미작성";return}
+    if(u===a){ok++;inp.className="ok";f.className="fb ok";f.textContent="정답";return}
+    inp.className="bad";f.className="fb bad";
+    const uw=u.split(" "),aw=a.split(" ");let k=0;while(k<uw.length&&k<aw.length&&uw[k]===aw[k])k++;
+    f.textContent=uw.length!==aw.length&&k===Math.min(uw.length,aw.length)?`단어 수가 다름 (${uw.length}/${aw.length})`:`${k+1}번째 단어부터 다름: "${uw[k]??"(없음)"}"`;
+  });
+  document.getElementById("score").textContent=`${ok} / 6 정답`;
+};
+document.getElementById("clear").onclick=render;
+document.getElementById("toggleP").onclick=e=>{const p=document.getElementById("passage");p.hidden=!p.hidden;e.target.textContent=p.hidden?"답안 보기":"답안 숨기기"};
+render();
+</script>
