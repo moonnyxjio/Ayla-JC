@@ -1,0 +1,1110 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>Phonics Workbook</title>
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; }
+body { font-variant-ligatures: none; font-family: 'Noto Sans KR', sans-serif; color: #1d2433; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.en { font-family: 'Andika', sans-serif; }
+.page { width: 210mm; height: 297mm; padding: 11mm 13mm 9mm; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
+.page:last-child { page-break-after: auto; }
+
+/* header */
+.hd { display: flex; align-items: stretch; gap: 4mm; margin-bottom: 4mm; }
+.hd .tag { background: var(--c); color: #fff; border-radius: 4mm; padding: 2.5mm 4mm; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 24mm; }
+.hd .tag .set { font-size: 9pt; font-weight: 700; opacity: .9; }
+.hd .tag .no { font-size: 24pt; font-weight: 900; line-height: 1; }
+.hd .title { flex: 1; border: 0.6mm solid var(--c); border-radius: 4mm; padding: 2mm 5mm; display: flex; flex-direction: column; justify-content: center; }
+.hd .sound { font-family: 'Andika', sans-serif; font-weight: 700; color: var(--c); line-height: 1.15; }
+.hd .rule { font-size: 10pt; color: #4a5468; margin-top: 1mm; }
+.hd .meta { width: 38mm; border: 0.3mm solid #c9d0dc; border-radius: 4mm; padding: 2mm 3mm; font-size: 8.5pt; color: #4a5468; display: flex; flex-direction: column; justify-content: space-around; }
+.hd .meta .ln { border-bottom: 0.3mm solid #c9d0dc; padding-bottom: .5mm; }
+.stars { font-size: 13pt; color: #d6dbe4; letter-spacing: 1mm; }
+
+/* sections */
+.sec { margin-bottom: 4.5mm; }
+.sec h2 { font-size: 11pt; margin: 0 0 1.8mm; display: flex; align-items: center; gap: 2mm; }
+.sec h2 .n { background: var(--c); color: #fff; width: 6mm; height: 6mm; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9pt; }
+.sec h2 small { font-weight: 400; color: #6b7487; font-size: 8.5pt; }
+.hi { color: var(--c); font-weight: 700; }
+
+.read { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm; }
+.read .w { border: 0.3mm solid #dfe3ea; border-radius: 2.5mm; padding: 1.6mm 1mm 1.2mm; text-align: center; background: #fafbfc; }
+.read .w .t { font-size: 19pt; line-height: 1.15; }
+.read .w .lab { font-size: 7pt; color: #8a93a6; font-family: 'Andika', sans-serif; }
+.read .w .ck { font-size: 8pt; color: #b6bdca; letter-spacing: 1mm; }
+
+.trace .row { position: relative; height: 15mm; margin-bottom: 3.2mm; }
+.trace .row .g { position: absolute; left: 0; right: 0; }
+.trace .row .g1 { top: 0; border-top: 0.25mm solid #9aa3b5; }
+.trace .row .g2 { top: 5mm; border-top: 0.25mm dashed #c3c9d4; }
+.trace .row .g3 { top: 10mm; border-top: 0.35mm solid #e06b6b; }
+.trace .row .g4 { top: 15mm; border-top: 0.25mm solid #9aa3b5; }
+.trace .row .word { position: absolute; left: 2mm; top: -2.3mm; font-family: 'Andika', sans-serif; font-size: 40pt; line-height: 1; color: #c4cbd8; letter-spacing: .6mm; }
+.trace .row .sep { position: absolute; top: 0; bottom: 0; border-left: 0.3mm dotted #c9d0dc; }
+
+.fill { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; }
+.fill .f { border: 0.3mm solid #dfe3ea; border-radius: 2.5mm; padding: 2.5mm 1mm 2mm; text-align: center; }
+.fill .f .t { font-size: 16pt; line-height: 1.2; white-space: nowrap; }
+.fill .f .n { font-size: 7.5pt; color: #8a93a6; }
+.box { display: inline-block; width: 4.6mm; height: 6.2mm; border: 0.35mm solid var(--c); border-radius: 1mm; margin: 0 .25mm; vertical-align: -1mm; background: #fff; }
+.bank { font-size: 9pt; color: #4a5468; margin: -0.5mm 0 1.8mm; }
+.bank span { font-family: 'Andika', sans-serif; font-size: 11pt; color: var(--c); font-weight: 700; }
+
+.dict { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8mm; }
+.dict .d { display: flex; align-items: flex-end; gap: 2mm; height: 12mm; border-bottom: 0.3mm solid #9aa3b5; font-size: 9pt; color: #8a93a6; padding-bottom: .8mm; }
+
+.ft { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 8pt; color: #8a93a6; border-top: 0.3mm solid #e3e7ee; padding-top: 2mm; }
+.ft .sign { border: 0.3mm solid #c9d0dc; border-radius: 2mm; padding: 1mm 3mm; }
+
+/* cover / toc / key */
+.cover { justify-content: center; align-items: center; text-align: center; }
+.cover h1 { font-family: 'Andika', sans-serif; font-size: 48pt; margin: 0; color: #1d2433; }
+.cover .sub { font-size: 14pt; color: #4a5468; margin: 3mm 0 10mm; }
+.cover .letters { font-family: 'Andika', sans-serif; font-size: 30pt; font-weight: 700; letter-spacing: 3mm; margin-bottom: 12mm; }
+.cover .name { font-size: 13pt; border-bottom: 0.4mm solid #1d2433; width: 110mm; margin: 0 auto 4mm; text-align: left; padding: 2mm; }
+.cover .tracker { margin-top: 12mm; width: 170mm; text-align: left; }
+.cover .tracker h3 { font-size: 11pt; margin: 0 0 2mm; }
+.cover .tracker .rowset { display: flex; align-items: center; gap: 2mm; margin-bottom: 2mm; font-size: 9pt; }
+.cover .tracker .rowset .lbl { width: 14mm; font-weight: 700; }
+.cover .tracker .dot { width: 9mm; height: 9mm; border-radius: 50%; border: 0.4mm solid; display: inline-flex; align-items: center; justify-content: center; font-size: 8pt; color: #8a93a6; }
+.how { margin-top: 10mm; width: 170mm; text-align: left; font-size: 9.5pt; color: #4a5468; border: 0.3mm solid #dfe3ea; border-radius: 3mm; padding: 3mm 5mm; }
+.how ol { margin: 1mm 0 0; padding-left: 5mm; }
+
+h1.pt { font-size: 18pt; margin: 0 0 4mm; }
+table.toc { width: 100%; border-collapse: collapse; font-size: 8.4pt; }
+table.toc th { background: #1d2433; color: #fff; padding: 1.4mm 2mm; text-align: left; }
+table.toc td { padding: 1.05mm 2mm; border-bottom: 0.25mm solid #e3e7ee; vertical-align: top; }
+table.toc td.snd { font-family: 'Andika', sans-serif; font-weight: 700; }
+table.toc .chip { display: inline-block; color: #fff; border-radius: 1.5mm; padding: 0 1.5mm; font-size: 7.5pt; font-weight: 700; }
+table.key td.ans { font-family: 'Andika', sans-serif; font-size: 10pt; }
+</style></head><body>
+<section class="page cover">
+  <h1>Phonics Workbook</h1>
+  <div class="sub">파닉스 워크북 · 5 Sets · 42 Pages · 431 Words</div>
+  <div class="letters"><span style="color:#E4572E">a</span> <span style="color:#2E86AB">sh</span> <span style="color:#3BA55C">ee</span> <span style="color:#8E5BD0">ar</span> <span style="color:#E09F1F">-tion</span></div>
+  <div class="name">이름 :</div>
+  <div class="name">시작한 날 :</div>
+  <div class="tracker"><h3>진도표 — 끝낸 페이지에 색칠하거나 스티커를 붙여요</h3><div class="rowset"><span class="lbl" style="color:#E4572E">Set 1</span><span class="dot" style="border-color:#E4572E">1</span><span class="dot" style="border-color:#E4572E">2</span><span class="dot" style="border-color:#E4572E">3</span><span class="dot" style="border-color:#E4572E">4</span><span class="dot" style="border-color:#E4572E">5</span><span class="dot" style="border-color:#E4572E">6</span><span class="dot" style="border-color:#E4572E">7</span><span class="dot" style="border-color:#E4572E">8</span></div><div class="rowset"><span class="lbl" style="color:#2E86AB">Set 2</span><span class="dot" style="border-color:#2E86AB">9</span><span class="dot" style="border-color:#2E86AB">10</span><span class="dot" style="border-color:#2E86AB">11</span><span class="dot" style="border-color:#2E86AB">12</span><span class="dot" style="border-color:#2E86AB">13</span><span class="dot" style="border-color:#2E86AB">14</span><span class="dot" style="border-color:#2E86AB">15</span><span class="dot" style="border-color:#2E86AB">16</span></div><div class="rowset"><span class="lbl" style="color:#3BA55C">Set 3</span><span class="dot" style="border-color:#3BA55C">17</span><span class="dot" style="border-color:#3BA55C">18</span><span class="dot" style="border-color:#3BA55C">19</span><span class="dot" style="border-color:#3BA55C">20</span><span class="dot" style="border-color:#3BA55C">21</span><span class="dot" style="border-color:#3BA55C">22</span><span class="dot" style="border-color:#3BA55C">23</span><span class="dot" style="border-color:#3BA55C">24</span><span class="dot" style="border-color:#3BA55C">25</span><span class="dot" style="border-color:#3BA55C">26</span></div><div class="rowset"><span class="lbl" style="color:#8E5BD0">Set 4</span><span class="dot" style="border-color:#8E5BD0">27</span><span class="dot" style="border-color:#8E5BD0">28</span><span class="dot" style="border-color:#8E5BD0">29</span><span class="dot" style="border-color:#8E5BD0">30</span><span class="dot" style="border-color:#8E5BD0">31</span><span class="dot" style="border-color:#8E5BD0">32</span><span class="dot" style="border-color:#8E5BD0">33</span><span class="dot" style="border-color:#8E5BD0">34</span></div><div class="rowset"><span class="lbl" style="color:#E09F1F">Set 5</span><span class="dot" style="border-color:#E09F1F">35</span><span class="dot" style="border-color:#E09F1F">36</span><span class="dot" style="border-color:#E09F1F">37</span><span class="dot" style="border-color:#E09F1F">38</span><span class="dot" style="border-color:#E09F1F">39</span><span class="dot" style="border-color:#E09F1F">40</span><span class="dot" style="border-color:#E09F1F">41</span><span class="dot" style="border-color:#E09F1F">42</span></div></div>
+  <div class="how"><b>하루 한 장 사용법</b><ol>
+    <li><b>읽기</b> — 색깔 글자 소리를 크게 말하며 단어를 3번 읽어요.</li>
+    <li><b>따라 쓰기</b> — 회색 글자를 따라 쓰고 두 번 더 써요. 빨간 선이 글자가 앉는 줄이에요.</li>
+    <li><b>빈칸 채우기</b> — 오늘 배운 소리 글자로 네모를 채워요.</li>
+    <li><b>받아쓰기</b> — 어른이 맨 뒤 정답표의 단어를 불러 주면 들리는 대로 써요.</li></ol></div>
+</section>
+<section class="page"><h1 class="pt">목차</h1>
+<table class="toc"><tr><th>쪽</th><th>세트</th><th>소리</th><th>묶음 기준</th></tr><tr><td>1</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">a · e · i · o · u</td><td>모음 5 — 모음 몰아 소개</td></tr><tr><td>2</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">t · n · m</td><td>자음 — 모음과 잘 붙음</td></tr><tr><td>3</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">s · p · d</td><td>자음 — 고빈도</td></tr><tr><td>4</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">g (hard) · c (hard) · r</td><td>자음</td></tr><tr><td>5</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">b · h · l</td><td>자음</td></tr><tr><td>6</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">f · k · w</td><td>자음</td></tr><tr><td>7</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">j · v · y (자음)</td><td>자음 — 저빈도</td></tr><tr><td>8</td><td><span class="chip" style="background:#E4572E">Set 1</span></td><td class="snd" style="color:#E4572E">z · x · qu</td><td>자음 — 저빈도</td></tr><tr><td>9</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">sh · ch</td><td>이중자 — 대조: 같은 위치 다른 소리 sh↔ch</td></tr><tr><td>10</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">th (무성) · th (유성)</td><td>이중자 — 대조: 무성↔유성</td></tr><tr><td>11</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">tch</td><td>같은소리 /tʃ/ — ch와 tch(끝)</td></tr><tr><td>12</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">ck · ng</td><td>끝소리 — /k/끝 ck · 콧소리 ng</td></tr><tr><td>13</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">wh · ph</td><td>이미 아는 소리 — wh=w · ph=f (아는 소리의 다른 철자)</td></tr><tr><td>14</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">ss · ll · ff · zz</td><td>겹자음 FLSZ — 같은 규칙 한 덩어리</td></tr><tr><td>15</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">bl cl fl gl pl sl · br cr dr fr gr pr tr · sc sk sm sn sp st sw</td><td>자음군 — 앞 블렌드 3계열</td></tr><tr><td>16</td><td><span class="chip" style="background:#2E86AB">Set 2</span></td><td class="snd" style="color:#2E86AB">-nd -nt -nk -mp -st -lt · spl str scr spr thr shr squ</td><td>자음군 — 끝·3글자</td></tr><tr><td>17</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">열린 음절 (CV)</td><td>열린음절 — 모음으로 끝=장모음</td></tr><tr><td>18</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">a_e · i_e · o_e · u_e</td><td>Magic-e — 같은 규칙(끝 e)</td></tr><tr><td>19</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">ai · ay</td><td>같은소리 /eɪ/ — ai=ay</td></tr><tr><td>20</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">ee · ea</td><td>같은소리 /iː/ — ee=ea</td></tr><tr><td>21</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">oa · ow (장·오우)</td><td>같은소리 /oʊ/ — oa=ow</td></tr><tr><td>22</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">igh · ie · y (장·아이)</td><td>같은소리 /aɪ/ — igh·ie·y</td></tr><tr><td>23</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">y (장·이)</td><td>같은소리 /iː/(끝) — 긴 단어 끝 y</td></tr><tr><td>24</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">oo (장) · ew · ue · ui</td><td>같은소리 /uː/ — oo·ew·ue·ui</td></tr><tr><td>25</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">oo (단)</td><td>짧은 oo — book류</td></tr><tr><td>26</td><td><span class="chip" style="background:#3BA55C">Set 3</span></td><td class="snd" style="color:#3BA55C">eigh</td><td>/eɪ/ 예외 — eigh</td></tr><tr><td>27</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">ar</td><td>r통제 /ar/ — ar</td></tr><tr><td>28</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">or · ore</td><td>r통제 /or/ — or=ore</td></tr><tr><td>29</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">er · ir · ur</td><td>r통제 /er/ — er=ir=ur 같은소리</td></tr><tr><td>30</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">oi · oy</td><td>이중모음 /ɔɪ/ — oi=oy</td></tr><tr><td>31</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">ou · ow (이중)</td><td>이중모음 /aʊ/ — ou=ow</td></tr><tr><td>32</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">au · aw</td><td>같은소리 /ɔː/ — au=aw</td></tr><tr><td>33</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">c (soft) · g (soft)</td><td>연음 규칙 — soft c=soft g (e·i·y 앞)</td></tr><tr><td>34</td><td><span class="chip" style="background:#8E5BD0">Set 4</span></td><td class="snd" style="color:#8E5BD0">kn · wr · mb · gn</td><td>묵음 — kn·wr·mb·gn(안 들리는 글자)</td></tr><tr><td>35</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">schwa (약모음)</td><td>약모음 — schwa</td></tr><tr><td>36</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">음절 6유형 · -le</td><td>음절 — 6유형 · C-le</td></tr><tr><td>37</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">-s / -es · -ed · -ing</td><td>굴절어미 — -s·-ed·-ing</td></tr><tr><td>38</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">-er / -est · -ly</td><td>굴절어미 — -er/-est · -ly</td></tr><tr><td>39</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">un- · re- · dis-</td><td>접두사 — un·re·dis</td></tr><tr><td>40</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">mis- · pre-</td><td>접두사 — mis·pre</td></tr><tr><td>41</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">-ful · -less · -ness</td><td>파생접미사 — -ful·-less·-ness</td></tr><tr><td>42</td><td><span class="chip" style="background:#E09F1F">Set 5</span></td><td class="snd" style="color:#E09F1F">-tion · -sion · -ture</td><td>명사화 어미 — -tion=-sion · -ture</td></tr></table></section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">1</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">a · e · i · o · u</div>
+      <div class="rule">모음 5 — 모음 몰아 소개</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">a</b>nt</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">a</b>pple</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">e</b>gg</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">e</b>nd</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">i</b>nk</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">i</b>gloo</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">o</b>x</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">o</b>tter</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">u</b>p</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">u</b>mbrella</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ant</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">egg</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ink</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ox</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">up</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>a · e · i · o · u</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span>nt</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span>gg</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span>nk</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span>x</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span>p</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>1 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">2</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">t · n · m</div>
+      <div class="rule">자음 — 모음과 잘 붙음</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">a<b class="hi">n</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">a<b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">i<b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">o<b class="hi">n</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">a<b class="hi">n</b><b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">m</b>a<b class="hi">n</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">m</b>a<b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">m</b>e<b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">m</b>o<b class="hi">m</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">n</b>e<b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">n</b>u<b class="hi">t</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">t</b>a<b class="hi">n</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">an</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">at</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">it</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">on</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ant</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>t · n · m</span></div>
+    <div class="fill"><div class="f"><div class="t en">a<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">a<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">i<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">o<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">a<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>2 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">3</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">s · p · d</div>
+      <div class="rule">자음 — 고빈도</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">a<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">u<b class="hi">p</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">u<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">d</b>a<b class="hi">d</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">d</b>am</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">d</b>en</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">d</b>i<b class="hi">d</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">d</b>i<b class="hi">p</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">d</b>ot</div><div class="ck">○○○</div></div><div class="w"><div class="t en">it<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ma<b class="hi">d</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ma<b class="hi">p</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">as</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">up</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">us</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">dad</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">dam</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>s · p · d</span></div>
+    <div class="fill"><div class="f"><div class="t en">a<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">u<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">u<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span>a<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span>am</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>3 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">4</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">g (hard) · c (hard) · r</div>
+      <div class="rule">자음</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">a<b class="hi">c</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>an</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>ap</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>od</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>op</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>ot</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>up</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>ut</div><div class="ck">○○○</div></div><div class="w"><div class="t en">di<b class="hi">g</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">do<b class="hi">g</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">g</b>a<b class="hi">g</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">act</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">can</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cap</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cod</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>g (hard) · c (hard) · r</span></div>
+    <div class="fill"><div class="f"><div class="t en">a<span class="box"></span>t</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span>an</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span>ap</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span>at</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span>od</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>4 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">5</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">b · h · l</div>
+      <div class="rule">자음</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">b</b>ad</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>ag</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>ed</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>i<b class="hi">b</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>ig</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>in</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>it</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>ug</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>un</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">b</b>us</div><div class="ck">○○○</div></div><div class="w"><div class="t en">ca<b class="hi">b</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bad</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bag</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bed</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bib</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>b · h · l</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span>ad</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span>ag</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span>at</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span>ed</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span>i<span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>5 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">6</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">f · k · w</div>
+      <div class="rule">자음</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">el<b class="hi">k</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>an</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>ed</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>ib</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>ig</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>in</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>it</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>og</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">f</b>un</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">k</b>eg</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">k</b>id</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">elk</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fan</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fed</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fib</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>f · k · w</span></div>
+    <div class="fill"><div class="f"><div class="t en">el<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span>an</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span>at</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span>ed</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span>ib</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>6 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">7</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">j · v · y (자음)</div>
+      <div class="rule">자음 — 저빈도</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">j</b>ab</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>am</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>et</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>ig</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>ob</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>og</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>ot</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">j</b>ug</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">v</b>an</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">v</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">v</b>et</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">v</b>im</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">jab</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">jam</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">jet</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">jig</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">job</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>j · v · y (자음)</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span>ab</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span>am</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span>et</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span>ig</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span>ob</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>7 / 42</span></div>
+</section>
+<section class="page" style="--c:#E4572E">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 1</div><div class="no">8</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">z · x · qu</div>
+      <div class="rule">자음 — 저빈도</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">a<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">o<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bo<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fa<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fi<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fo<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">la<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">mi<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">sa<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">si<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ta<b class="hi">x</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">wa<b class="hi">x</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ax</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ox</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">box</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fax</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fix</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>z · x · qu</span></div>
+    <div class="fill"><div class="f"><div class="t en">a<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">o<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">bo<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">fa<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">fi<span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 1 단모음 · 단자음</span>
+    <span class="sign">확인 ________</span><span>8 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">9</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">sh · ch</div>
+      <div class="rule">이중자 — 대조: 같은 위치 다른 소리 sh↔ch</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">ca<b class="hi">sh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ch</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ch</b>in</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ch</b>ip</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ch</b>op</div><div class="ck">○○○</div></div><div class="w"><div class="t en">di<b class="hi">sh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fi<b class="hi">sh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">mu<b class="hi">ch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ri<b class="hi">ch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ru<b class="hi">sh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">sh</b>ed</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">sh</b>ip</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cash</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">chat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">chin</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">chip</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">chop</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>sh · ch</span></div>
+    <div class="fill"><div class="f"><div class="t en">ca<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>at</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>in</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>ip</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>op</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>9 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">10</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">th (무성) · th (유성)</div>
+      <div class="rule">이중자 — 대조: 무성↔유성</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">ba<b class="hi">th</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ma<b class="hi">th</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">mo<b class="hi">th</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">pa<b class="hi">th</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>an</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>em</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>en</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>in</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>is</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>ud</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">th</b>us</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bath</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">math</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">moth</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">path</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">than</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>th (무성) · th (유성)</span></div>
+    <div class="fill"><div class="f"><div class="t en">ba<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">ma<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">mo<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">pa<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>an</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>10 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">11</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">tch</div>
+      <div class="rule">같은소리 /tʃ/ — ch와 tch(끝)</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">ba<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ca<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">di<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fe<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ha<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">hu<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">la<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ma<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">no<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">pa<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">pi<b class="hi">tch</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">wa<b class="hi">tch</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">batch</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">catch</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ditch</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fetch</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">hatch</div><div class="sep" style="left:55mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>tch</span></div>
+    <div class="fill"><div class="f"><div class="t en">ba<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">ca<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">di<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">fe<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">ha<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>11 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">12</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">ck · ng</div>
+      <div class="rule">끝소리 — /k/끝 ck · 콧소리 ng</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">ba<b class="hi">ck</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ba<b class="hi">ng</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">de<b class="hi">ck</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">du<b class="hi">ck</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ga<b class="hi">ng</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ha<b class="hi">ng</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ki<b class="hi">ck</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ki<b class="hi">ng</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">li<b class="hi">ck</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">lo<b class="hi">ck</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">lo<b class="hi">ng</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">lu<b class="hi">ck</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">back</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bang</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">deck</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">duck</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">gang</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>ck · ng</span></div>
+    <div class="fill"><div class="f"><div class="t en">ba<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">ba<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">de<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">du<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">ga<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>12 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">13</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">wh · ph</div>
+      <div class="rule">이미 아는 소리 — wh=w · ph=f (아는 소리의 다른 철자)</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">wh</b>en</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">wh</b>ip</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">wh</b>iz</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">wh</b>ich</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">when</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">whip</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">whiz</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">which</div><div class="sep" style="left:55mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>wh · ph</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>en</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>ip</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>iz</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>ich</div><div class="n">4</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>13 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">14</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">ss · ll · ff · zz</div>
+      <div class="rule">겹자음 FLSZ — 같은 규칙 한 덩어리</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">o<b class="hi">ff</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ba<b class="hi">ll</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">be<b class="hi">ll</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bo<b class="hi">ss</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bu<b class="hi">ff</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bu<b class="hi">zz</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cu<b class="hi">ff</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">do<b class="hi">ll</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fe<b class="hi">ll</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fi<b class="hi">ll</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fi<b class="hi">zz</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fu<b class="hi">ll</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">off</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ball</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bell</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">boss</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">buff</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>ss · ll · ff · zz</span></div>
+    <div class="fill"><div class="f"><div class="t en">o<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">ba<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">be<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">bo<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">bu<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>14 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">15</div></div>
+    <div class="title"><div class="sound" style="font-size:12pt">bl cl fl gl pl sl · br cr dr fr gr pr tr · sc sk sm sn sp st sw</div>
+      <div class="rule">자음군 — 앞 블렌드 3계열</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">bl</b>ack</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">bl</b>ot</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">bl</b>end</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">cl</b>ap</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">cl</b>ip</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">cl</b>iff</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">fl</b>ag</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">fl</b>at</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">black</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">blot</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">blend</div><div class="sep" style="left:55mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>bl cl fl gl pl sl · br cr dr fr gr pr tr · sc sk sm sn sp st sw</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>ack</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>ot</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>end</div><div class="n">3</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>15 / 42</span></div>
+</section>
+<section class="page" style="--c:#2E86AB">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 2</div><div class="no">16</div></div>
+    <div class="title"><div class="sound" style="font-size:12pt">-nd -nt -nk -mp -st -lt · spl str scr spr thr shr squ</div>
+      <div class="rule">자음군 — 끝·3글자</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">ha<b class="hi">nd</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">la<b class="hi">nd</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">sa<b class="hi">nd</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">te<b class="hi">nt</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">be<b class="hi">nt</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">si<b class="hi">nk</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">pi<b class="hi">nk</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ba<b class="hi">nk</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">hand</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">land</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">sand</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">tent</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bent</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>-nd -nt -nk -mp -st -lt · spl str scr spr thr shr squ</span></div>
+    <div class="fill"><div class="f"><div class="t en">ha<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">la<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">sa<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">te<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">be<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 2 이중자 · 자음군</span>
+    <span class="sign">확인 ________</span><span>16 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">17</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">열린 음절 (CV)</div>
+      <div class="rule">열린음절 — 모음으로 끝=장모음</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">m<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">w<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">sh<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">g<b class="hi">o</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">n<b class="hi">o</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">o</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">me</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">we</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">he</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">she</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">be</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>열린 음절 (CV)</span></div>
+    <div class="fill"><div class="f"><div class="t en">m<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">w<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">h<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">sh<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">b<span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>17 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">18</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">a_e · i_e · o_e · u_e</div>
+      <div class="rule">Magic-e — 같은 규칙(끝 e)</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">b<b class="hi">a</b>k<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">a</b>k<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">a</b>v<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">a</b>t<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">g<b class="hi">a</b>m<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">a</b>k<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">i</b>k<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">i</b>m<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">i</b>v<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">i</b>d<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">k<b class="hi">i</b>t<b class="hi">e</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">i</b>m<b class="hi">e</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bake</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cake</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cave</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">date</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">game</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>a_e · i_e · o_e · u_e</span></div>
+    <div class="fill"><div class="f"><div class="t en">b<span class="box"></span>k<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">c<span class="box"></span>k<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">c<span class="box"></span>v<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">d<span class="box"></span>t<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">g<span class="box"></span>m<span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>18 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">19</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">ai · ay</div>
+      <div class="rule">같은소리 /eɪ/ — ai=ay</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">d<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">m<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">p<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">r<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">w<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cl<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">gr<b class="hi">ay</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">m<b class="hi">ai</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">m<b class="hi">ai</b>n</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">day</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">hay</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">lay</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">may</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">pay</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>ai · ay</span></div>
+    <div class="fill"><div class="f"><div class="t en">d<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">h<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">l<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">m<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">p<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>19 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">20</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">ee · ea</div>
+      <div class="rule">같은소리 /iː/ — ee=ea</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">b<b class="hi">ee</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ea</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">ea</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">ee</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">ea</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">ee</b>p</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">ee</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">fr<b class="hi">ee</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">ea</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">k<b class="hi">ee</b>p</div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">ea</b>f</div><div class="ck">○○○</div></div><div class="w"><div class="t en">m<b class="hi">ea</b>n</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bee</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">eat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">sea</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">see</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">tea</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>ee · ea</span></div>
+    <div class="fill"><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>t</div><div class="n">2</div></div><div class="f"><div class="t en">s<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">s<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">t<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>20 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">21</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">oa · ow (장·오우)</div>
+      <div class="rule">같은소리 /oʊ/ — oa=ow</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">oa</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">oa</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">oa</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">oa</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">oa</b>m</div><div class="ck">○○○</div></div><div class="w"><div class="t en">g<b class="hi">oa</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">oa</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">r<b class="hi">oa</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">oa</b>p</div><div class="ck">○○○</div></div><div class="w"><div class="t en">cl<b class="hi">oa</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">oa</b>st</div><div class="ck">○○○</div></div><div class="w"><div class="t en">fl<b class="hi">oa</b>t</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">oak</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">oat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">boat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">coat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">foam</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>oa · ow (장·오우)</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>k</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>t</div><div class="n">2</div></div><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span>t</div><div class="n">3</div></div><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span>t</div><div class="n">4</div></div><div class="f"><div class="t en">f<span class="box"></span><span class="box"></span>m</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>21 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">22</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">igh · ie · y (장·아이)</div>
+      <div class="rule">같은소리 /aɪ/ — igh·ie·y</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">d<b class="hi">ie</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">ie</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">p<b class="hi">ie</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">ie</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">igh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">igh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">igh</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">igh</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">m<b class="hi">igh</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">n<b class="hi">igh</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">r<b class="hi">igh</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">igh</b>t</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">die</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">lie</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">pie</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">tie</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">high</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>igh · ie · y (장·아이)</span></div>
+    <div class="fill"><div class="f"><div class="t en">d<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">l<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">p<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">t<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">h<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>22 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">23</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">y (장·이)</div>
+      <div class="rule">같은소리 /iː/(끝) — 긴 단어 끝 y</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">happ<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">pupp<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bab<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">funn<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">sunn<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cand<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cit<b class="hi">y</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">part<b class="hi">y</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">happy</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">puppy</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">baby</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">funny</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">sunny</div><div class="sep" style="left:55mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>y (장·이)</span></div>
+    <div class="fill"><div class="f"><div class="t en">happ<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">pupp<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">bab<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">funn<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">sunn<span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>23 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">24</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">oo (장) · ew · ue · ui</div>
+      <div class="rule">같은소리 /uː/ — oo·ew·ue·ui</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">c<b class="hi">ue</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">ew</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">ue</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">ew</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">ue</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">n<b class="hi">ew</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">ue</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bl<b class="hi">ew</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bl<b class="hi">ue</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">br<b class="hi">ew</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ch<b class="hi">ew</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cl<b class="hi">ue</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cue</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">dew</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">due</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">few</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">hue</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>oo (장) · ew · ue · ui</span></div>
+    <div class="fill"><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">d<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">d<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">f<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">h<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>24 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">25</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">oo (단)</div>
+      <div class="rule">짧은 oo — book류</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">b<b class="hi">oo</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">oo</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">oo</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">g<b class="hi">oo</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">oo</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">oo</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">n<b class="hi">oo</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">oo</b>d</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">book</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cook</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">foot</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">good</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">hook</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>oo (단)</span></div>
+    <div class="fill"><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span>k</div><div class="n">1</div></div><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span>k</div><div class="n">2</div></div><div class="f"><div class="t en">f<span class="box"></span><span class="box"></span>t</div><div class="n">3</div></div><div class="f"><div class="t en">g<span class="box"></span><span class="box"></span>d</div><div class="n">4</div></div><div class="f"><div class="t en">h<span class="box"></span><span class="box"></span>k</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>25 / 42</span></div>
+</section>
+<section class="page" style="--c:#3BA55C">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 3</div><div class="no">26</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">eigh</div>
+      <div class="rule">/eɪ/ 예외 — eigh</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">eigh</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">n<b class="hi">eigh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">w<b class="hi">eigh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">eigh</b>ty</div><div class="ck">○○○</div></div><div class="w"><div class="t en">sl<b class="hi">eigh</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">w<b class="hi">eigh</b>t</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">eight</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">neigh</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">weigh</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">eighty</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">sleigh</div><div class="sep" style="left:64mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>eigh</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span>t</div><div class="n">1</div></div><div class="f"><div class="t en">n<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">w<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span>ty</div><div class="n">4</div></div><div class="f"><div class="t en">sl<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 3 장모음 · 모음팀</span>
+    <span class="sign">확인 ________</span><span>26 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">27</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">ar</div>
+      <div class="rule">r통제 /ar/ — ar</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">ar</b>m</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">ar</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">ar</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">j<b class="hi">ar</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">ar</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">ar</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">ar</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">ar</b>m</div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">ar</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">p<b class="hi">ar</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">st<b class="hi">ar</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">y<b class="hi">ar</b>d</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">arm</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">car</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">far</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">jar</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bark</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>ar</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>m</div><div class="n">1</div></div><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">f<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">j<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span>k</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>27 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">28</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">or · ore</div>
+      <div class="rule">r통제 /or/ — or=ore</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">b<b class="hi">ore</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">or</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">or</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">ore</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">or</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">or</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">or</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">or</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">m<b class="hi">ore</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">p<b class="hi">or</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">or</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">ore</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bore</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">born</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cord</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">core</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">corn</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>or · ore</span></div>
+    <div class="fill"><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span>n</div><div class="n">2</div></div><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span>d</div><div class="n">3</div></div><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span>n</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>28 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">29</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">er · ir · ur</div>
+      <div class="rule">r통제 /er/ — er=ir=ur 같은소리</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">f<b class="hi">ir</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">ur</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">er</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">ir</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">ir</b>d</div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">ur</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">ur</b>b</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">ur</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">ir</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">er</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">g<b class="hi">ir</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">er</b>d</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fir</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fur</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">her</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">sir</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bird</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>er · ir · ur</span></div>
+    <div class="fill"><div class="f"><div class="t en">f<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">f<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">h<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">s<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span>d</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>29 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">30</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">oi · oy</div>
+      <div class="rule">이중모음 /ɔɪ/ — oi=oy</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">b<b class="hi">oy</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">j<b class="hi">oy</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">oi</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">oy</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">oy</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">oi</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">c<b class="hi">oi</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">f<b class="hi">oi</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">j<b class="hi">oi</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">pl<b class="hi">oy</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">oi</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">oi</b>l</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">boy</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">joy</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">oil</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">soy</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">toy</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>oi · oy</span></div>
+    <div class="fill"><div class="f"><div class="t en">b<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">j<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>l</div><div class="n">3</div></div><div class="f"><div class="t en">s<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">t<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>30 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">31</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">ou · ow (이중)</div>
+      <div class="rule">이중모음 /aʊ/ — ou=ow</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">c<b class="hi">ow</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">ow</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">n<b class="hi">ow</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ou</b>t</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">ow</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">w<b class="hi">ow</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">ow</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">g<b class="hi">ow</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">t<b class="hi">ow</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">br<b class="hi">ow</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">cl<b class="hi">ow</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">cr<b class="hi">ow</b>d</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cow</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">how</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">now</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">out</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">owl</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>ou · ow (이중)</span></div>
+    <div class="fill"><div class="f"><div class="t en">c<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">h<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">n<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>t</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>l</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>31 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">32</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">au · aw</div>
+      <div class="rule">같은소리 /ɔː/ — au=aw</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">j<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">p<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">r<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">s<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cl<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">d<b class="hi">aw</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">dr<b class="hi">aw</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">au</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">h<b class="hi">aw</b>k</div><div class="ck">○○○</div></div><div class="w"><div class="t en">l<b class="hi">aw</b>n</div><div class="ck">○○○</div></div><div class="w"><div class="t en">y<b class="hi">aw</b>n</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">jaw</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">law</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">paw</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">raw</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">saw</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>au · aw</span></div>
+    <div class="fill"><div class="f"><div class="t en">j<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">l<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">p<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">r<span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">s<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>32 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">33</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">c (soft) · g (soft)</div>
+      <div class="rule">연음 규칙 — soft c=soft g (e·i·y 앞)</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">c</b>ity</div><div class="ck">○○○</div></div><div class="w"><div class="t en">i<b class="hi">c</b>e</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>ent</div><div class="ck">○○○</div></div><div class="w"><div class="t en">fa<b class="hi">c</b>e</div><div class="ck">○○○</div></div><div class="w"><div class="t en">ra<b class="hi">c</b>e</div><div class="ck">○○○</div></div><div class="w"><div class="t en">ri<b class="hi">c</b>e</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">c</b>ell</div><div class="ck">○○○</div></div><div class="w"><div class="t en">ni<b class="hi">c</b>e</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">city</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">ice</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cent</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">face</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">race</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>c (soft) · g (soft)</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span>ity</div><div class="n">1</div></div><div class="f"><div class="t en">i<span class="box"></span>e</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span>ent</div><div class="n">3</div></div><div class="f"><div class="t en">fa<span class="box"></span>e</div><div class="n">4</div></div><div class="f"><div class="t en">ra<span class="box"></span>e</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>33 / 42</span></div>
+</section>
+<section class="page" style="--c:#8E5BD0">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 4</div><div class="no">34</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">kn · wr · mb · gn</div>
+      <div class="rule">묵음 — kn·wr·mb·gn(안 들리는 글자)</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">bo<b class="hi">mb</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">co<b class="hi">mb</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">du<b class="hi">mb</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">gn</b>at</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">gn</b>aw</div><div class="ck">○○○</div></div><div class="w"><div class="t en">ja<b class="hi">mb</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">kn</b>ee</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">kn</b>ew</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">kn</b>it</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">kn</b>ob</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">kn</b>ot</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">kn</b>ow</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bomb</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">comb</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">dumb</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">gnat</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">gnaw</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>kn · wr · mb · gn</span></div>
+    <div class="fill"><div class="f"><div class="t en">bo<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">co<span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">du<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>at</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>aw</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 4 r통제 · 이중모음 · 특수규칙</span>
+    <span class="sign">확인 ________</span><span>34 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">35</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">schwa (약모음)</div>
+      <div class="rule">약모음 — schwa</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">a</b>bout</div><div class="ck">○○○</div></div><div class="w"><div class="t en">sof<b class="hi">a</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">zebr<b class="hi">a</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">b<b class="hi">a</b>nan<b class="hi">a</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">penc<b class="hi">i</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">probl<b class="hi">e</b>m</div><div class="ck">○○○</div></div><div class="w"><div class="t en">anim<b class="hi">a</b>l</div><div class="ck">○○○</div></div><div class="w"><div class="t en">lem<b class="hi">o</b>n</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">about</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">sofa</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">zebra</div><div class="sep" style="left:55mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">banana</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">pencil</div><div class="sep" style="left:64mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>schwa (약모음)</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span>bout</div><div class="n">1</div></div><div class="f"><div class="t en">sof<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">zebr<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">b<span class="box"></span>nan<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">penc<span class="box"></span>l</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>35 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">36</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">음절 6유형 · -le</div>
+      <div class="rule">음절 — 6유형 · C-le</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">cat</div><div class="lab">closed</div><div class="ck">○○○</div></div><div class="w"><div class="t en">me</div><div class="lab">open</div><div class="ck">○○○</div></div><div class="w"><div class="t en">cake</div><div class="lab">VCe</div><div class="ck">○○○</div></div><div class="w"><div class="t en">rain</div><div class="lab">vowel team</div><div class="ck">○○○</div></div><div class="w"><div class="t en">car</div><div class="lab">r-controlled</div><div class="ck">○○○</div></div><div class="w"><div class="t en">tab<b class="hi">le</b></div><div class="lab">C-le</div><div class="ck">○○○</div></div><div class="w"><div class="t en">app<b class="hi">le</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">table</div><div class="sep" style="left:55mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>음절 6유형 · -le</span></div>
+    <div class="fill"><div class="f"><div class="t en">tab<span class="box"></span><span class="box"></span></div><div class="n">1</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>36 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">37</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">-s / -es · -ed · -ing</div>
+      <div class="rule">굴절어미 — -s·-ed·-ing</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">cat<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">dog<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">run<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">hat<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cup<b class="hi">s</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">box<b class="hi">es</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fox<b class="hi">es</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">dish<b class="hi">es</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cats</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">dogs</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">runs</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">hats</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">cups</div><div class="sep" style="left:46mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>-s / -es · -ed · -ing</span></div>
+    <div class="fill"><div class="f"><div class="t en">cat<span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">dog<span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">run<span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">hat<span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">cup<span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>37 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">38</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">-er / -est · -ly</div>
+      <div class="rule">굴절어미 — -er/-est · -ly</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">fast<b class="hi">er</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fast<b class="hi">est</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bigg<b class="hi">er</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">bigg<b class="hi">est</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">tall<b class="hi">er</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">tall<b class="hi">est</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">small<b class="hi">er</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">small<b class="hi">est</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">faster</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">fastest</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">bigger</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">biggest</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">taller</div><div class="sep" style="left:64mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>-er / -est · -ly</span></div>
+    <div class="fill"><div class="f"><div class="t en">fast<span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">fast<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">bigg<span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">bigg<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">tall<span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>38 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">39</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">un- · re- · dis-</div>
+      <div class="rule">접두사 — un·re·dis</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">un</b>happy</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>lock</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>do</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>fair</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>kind</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>safe</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>pack</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">un</b>zip</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">unhappy</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">unlock</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">undo</div><div class="sep" style="left:46mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">unfair</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">unkind</div><div class="sep" style="left:64mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>un- · re- · dis-</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>happy</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>lock</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>do</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>fair</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span>kind</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>39 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">40</div></div>
+    <div class="title"><div class="sound" style="font-size:30pt">mis- · pre-</div>
+      <div class="rule">접두사 — mis·pre</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en"><b class="hi">mis</b>take</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>read</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>place</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>spell</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>lead</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>trust</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>use</div><div class="ck">○○○</div></div><div class="w"><div class="t en"><b class="hi">mis</b>print</div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">mistake</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">misread</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">misplace</div><div class="sep" style="left:81mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">misspell</div><div class="sep" style="left:81mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">mislead</div><div class="sep" style="left:72mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>mis- · pre-</span></div>
+    <div class="fill"><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span>take</div><div class="n">1</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span>read</div><div class="n">2</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span>place</div><div class="n">3</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span>spell</div><div class="n">4</div></div><div class="f"><div class="t en"><span class="box"></span><span class="box"></span><span class="box"></span>lead</div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>40 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">41</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">-ful · -less · -ness</div>
+      <div class="rule">파생접미사 — -ful·-less·-ness</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">help<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">care<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">use<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">joy<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">play<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">hope<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">cheer<b class="hi">ful</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">thank<b class="hi">ful</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">helpful</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">careful</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">useful</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">joyful</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">playful</div><div class="sep" style="left:72mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>-ful · -less · -ness</span></div>
+    <div class="fill"><div class="f"><div class="t en">help<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">care<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">use<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">joy<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">play<span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>41 / 42</span></div>
+</section>
+<section class="page" style="--c:#E09F1F">
+  <div class="hd">
+    <div class="tag"><div class="set">Set 5</div><div class="no">42</div></div>
+    <div class="title"><div class="sound" style="font-size:22pt">-tion · -sion · -ture</div>
+      <div class="rule">명사화 어미 — -tion=-sion · -ture</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>
+
+  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
+    <div class="read"><div class="w"><div class="t en">ac<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">sta<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">na<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">mo<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">sec<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">fic<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">men<b class="hi">tion</b></div><div class="ck">○○○</div></div><div class="w"><div class="t en">ques<b class="hi">tion</b></div><div class="ck">○○○</div></div></div></div>
+
+  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
+    <div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">action</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">station</div><div class="sep" style="left:72mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">nation</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">motion</div><div class="sep" style="left:64mm"></div></div><div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div><div class="g g4"></div><div class="word">section</div><div class="sep" style="left:72mm"></div></div></div>
+
+  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
+    <div class="bank">힌트 소리: <span>-tion · -sion · -ture</span></div>
+    <div class="fill"><div class="f"><div class="t en">ac<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">1</div></div><div class="f"><div class="t en">sta<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">2</div></div><div class="f"><div class="t en">na<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">3</div></div><div class="f"><div class="t en">mo<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">4</div></div><div class="f"><div class="t en">sec<span class="box"></span><span class="box"></span><span class="box"></span><span class="box"></span></div><div class="n">5</div></div></div></div>
+
+  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
+    <div class="dict"><div class="d">1.</div><div class="d">2.</div><div class="d">3.</div><div class="d">4.</div><div class="d">5.</div><div class="d">6.</div></div></div>
+
+  <div class="ft"><span>Phonics Workbook · Set 5 음절 · 어미 · 접사</span>
+    <span class="sign">확인 ________</span><span>42 / 42</span></div>
+</section>
+<section class="page"><h1 class="pt">정답 · 받아쓰기 단어 (1–21쪽)</h1>
+<p style="font-size:9pt;color:#6b7487;margin:-2mm 0 3mm">3번 빈칸 채우기와 4번 받아쓰기의 정답입니다. 받아쓰기는 순서를 섞어 불러 줘도 좋아요.</p>
+<table class="toc key"><tr><th>쪽</th><th>소리</th><th>단어</th></tr><tr><td>1</td><td class="snd" style="color:#E4572E">a · e · i · o · u</td><td class="ans">ant, egg, ink, ox, up</td></tr><tr><td>2</td><td class="snd" style="color:#E4572E">t · n · m</td><td class="ans">an, at, it, on, ant</td></tr><tr><td>3</td><td class="snd" style="color:#E4572E">s · p · d</td><td class="ans">as, up, us, dad, dam</td></tr><tr><td>4</td><td class="snd" style="color:#E4572E">g (hard) · c (hard) · r</td><td class="ans">act, can, cap, cat, cod</td></tr><tr><td>5</td><td class="snd" style="color:#E4572E">b · h · l</td><td class="ans">bad, bag, bat, bed, bib</td></tr><tr><td>6</td><td class="snd" style="color:#E4572E">f · k · w</td><td class="ans">elk, fan, fat, fed, fib</td></tr><tr><td>7</td><td class="snd" style="color:#E4572E">j · v · y (자음)</td><td class="ans">jab, jam, jet, jig, job</td></tr><tr><td>8</td><td class="snd" style="color:#E4572E">z · x · qu</td><td class="ans">ax, ox, box, fax, fix</td></tr><tr><td>9</td><td class="snd" style="color:#2E86AB">sh · ch</td><td class="ans">cash, chat, chin, chip, chop</td></tr><tr><td>10</td><td class="snd" style="color:#2E86AB">th (무성) · th (유성)</td><td class="ans">bath, math, moth, path, than</td></tr><tr><td>11</td><td class="snd" style="color:#2E86AB">tch</td><td class="ans">batch, catch, ditch, fetch, hatch</td></tr><tr><td>12</td><td class="snd" style="color:#2E86AB">ck · ng</td><td class="ans">back, bang, deck, duck, gang</td></tr><tr><td>13</td><td class="snd" style="color:#2E86AB">wh · ph</td><td class="ans">when, whip, whiz, which</td></tr><tr><td>14</td><td class="snd" style="color:#2E86AB">ss · ll · ff · zz</td><td class="ans">off, ball, bell, boss, buff</td></tr><tr><td>15</td><td class="snd" style="color:#2E86AB">bl cl fl gl pl sl · br cr dr fr gr pr tr · sc sk sm sn sp st sw</td><td class="ans">black, blot, blend</td></tr><tr><td>16</td><td class="snd" style="color:#2E86AB">-nd -nt -nk -mp -st -lt · spl str scr spr thr shr squ</td><td class="ans">hand, land, sand, tent, bent</td></tr><tr><td>17</td><td class="snd" style="color:#3BA55C">열린 음절 (CV)</td><td class="ans">me, we, he, she, be</td></tr><tr><td>18</td><td class="snd" style="color:#3BA55C">a_e · i_e · o_e · u_e</td><td class="ans">bake, cake, cave, date, game</td></tr><tr><td>19</td><td class="snd" style="color:#3BA55C">ai · ay</td><td class="ans">day, hay, lay, may, pay</td></tr><tr><td>20</td><td class="snd" style="color:#3BA55C">ee · ea</td><td class="ans">bee, eat, sea, see, tea</td></tr><tr><td>21</td><td class="snd" style="color:#3BA55C">oa · ow (장·오우)</td><td class="ans">oak, oat, boat, coat, foam</td></tr></table></section>
+<section class="page"><h1 class="pt">정답 · 받아쓰기 단어 (22–42쪽)</h1>
+<p style="font-size:9pt;color:#6b7487;margin:-2mm 0 3mm">3번 빈칸 채우기와 4번 받아쓰기의 정답입니다. 받아쓰기는 순서를 섞어 불러 줘도 좋아요.</p>
+<table class="toc key"><tr><th>쪽</th><th>소리</th><th>단어</th></tr><tr><td>22</td><td class="snd" style="color:#3BA55C">igh · ie · y (장·아이)</td><td class="ans">die, lie, pie, tie, high</td></tr><tr><td>23</td><td class="snd" style="color:#3BA55C">y (장·이)</td><td class="ans">happy, puppy, baby, funny, sunny</td></tr><tr><td>24</td><td class="snd" style="color:#3BA55C">oo (장) · ew · ue · ui</td><td class="ans">cue, dew, due, few, hue</td></tr><tr><td>25</td><td class="snd" style="color:#3BA55C">oo (단)</td><td class="ans">book, cook, foot, good, hook</td></tr><tr><td>26</td><td class="snd" style="color:#3BA55C">eigh</td><td class="ans">eight, neigh, weigh, eighty, sleigh</td></tr><tr><td>27</td><td class="snd" style="color:#8E5BD0">ar</td><td class="ans">arm, car, far, jar, bark</td></tr><tr><td>28</td><td class="snd" style="color:#8E5BD0">or · ore</td><td class="ans">bore, born, cord, core, corn</td></tr><tr><td>29</td><td class="snd" style="color:#8E5BD0">er · ir · ur</td><td class="ans">fir, fur, her, sir, bird</td></tr><tr><td>30</td><td class="snd" style="color:#8E5BD0">oi · oy</td><td class="ans">boy, joy, oil, soy, toy</td></tr><tr><td>31</td><td class="snd" style="color:#8E5BD0">ou · ow (이중)</td><td class="ans">cow, how, now, out, owl</td></tr><tr><td>32</td><td class="snd" style="color:#8E5BD0">au · aw</td><td class="ans">jaw, law, paw, raw, saw</td></tr><tr><td>33</td><td class="snd" style="color:#8E5BD0">c (soft) · g (soft)</td><td class="ans">city, ice, cent, face, race</td></tr><tr><td>34</td><td class="snd" style="color:#8E5BD0">kn · wr · mb · gn</td><td class="ans">bomb, comb, dumb, gnat, gnaw</td></tr><tr><td>35</td><td class="snd" style="color:#E09F1F">schwa (약모음)</td><td class="ans">about, sofa, zebra, banana, pencil</td></tr><tr><td>36</td><td class="snd" style="color:#E09F1F">음절 6유형 · -le</td><td class="ans">table</td></tr><tr><td>37</td><td class="snd" style="color:#E09F1F">-s / -es · -ed · -ing</td><td class="ans">cats, dogs, runs, hats, cups</td></tr><tr><td>38</td><td class="snd" style="color:#E09F1F">-er / -est · -ly</td><td class="ans">faster, fastest, bigger, biggest, taller</td></tr><tr><td>39</td><td class="snd" style="color:#E09F1F">un- · re- · dis-</td><td class="ans">unhappy, unlock, undo, unfair, unkind</td></tr><tr><td>40</td><td class="snd" style="color:#E09F1F">mis- · pre-</td><td class="ans">mistake, misread, misplace, misspell, mislead</td></tr><tr><td>41</td><td class="snd" style="color:#E09F1F">-ful · -less · -ness</td><td class="ans">helpful, careful, useful, joyful, playful</td></tr><tr><td>42</td><td class="snd" style="color:#E09F1F">-tion · -sion · -ture</td><td class="ans">action, station, nation, motion, section</td></tr></table></section></body></html>
