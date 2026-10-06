@@ -1,16 +1,16 @@
-"""Build a printable phonics workbook (HTML -> PDF) from phonics_toc.xlsx.
+"""Build a printable phonics workbook (HTML -> PDF) from phonics_toc.xlsx + content.py.
 
 Usage:
-    python workbook/build_workbook.py            # writes workbook/phonics_workbook.html + .pdf
+    python workbook/build_workbook.py      # writes workbook/phonics_workbook.html + .pdf
 
-Each row of the TOC sheet becomes one A4 worksheet:
-  1. 소리 내어 읽기 (target spelling highlighted)
-  2. 따라 쓰기 (trace on 4-line guides)
-  3. 빈칸 채우기 (target spelling blanked)
-  4. 받아쓰기 (dictation lines; answers in the key at the back)
+Every TOC row becomes a two-page lesson:
+  A 배우기  — 소리 팁, 읽기, 소리 블렌딩, 소리 찾기/분류, 지난 소리 복습
+  B 연습    — 따라 쓰기, 빈칸 채우기, 뜻 연결, 문장 완성, 받아쓰기, 자기 점검
+Each Set ends with two review pages, and the answer key is at the back.
 """
 import html
 import os
+import random
 import re
 import subprocess
 import sys
@@ -18,7 +18,11 @@ import sys
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+from content import GLOSS, SENTENCES, SORT, SUPPLEMENT, SYLLABLES, TIPS  # noqa: E402
+
 SRC = os.path.join(HERE, "phonics_toc.xlsx")
+CSS_FILE = os.path.join(HERE, "workbook.css")
 OUT_HTML = os.path.join(HERE, "phonics_workbook.html")
 OUT_PDF = os.path.join(HERE, "phonics_workbook.pdf")
 CHROME = os.environ.get("CHROME", "/opt/pw-browsers/chromium-1194/chrome-linux/chrome")
@@ -30,51 +34,22 @@ SETS = {
     "Set 4": ("r통제 · 이중모음 · 특수규칙", "#8E5BD0"),
     "Set 5": ("음절 · 어미 · 접사", "#E09F1F"),
 }
+SET_END = (8, 16, 26, 34, 42)
 
 # Per-page highlight rule. A regex with groups highlights only the groups;
 # otherwise every whole match is highlighted.
 RULES = {
-    1: r"^[aeiou]",
-    2: r"[tnm]",
-    3: r"[spd]",
-    4: r"[gcr]",
-    5: r"[bhl]",
-    6: r"[fkw]",
-    7: r"[jvy]",
-    8: r"qu|[zx]",
-    9: r"sh|ch",
-    10: r"th",
-    11: r"tch",
-    12: r"ck|ng",
-    13: r"wh|ph",
-    14: r"ss|ll|ff|zz",
+    1: r"^[aeiou]", 2: r"[tnm]", 3: r"[spd]", 4: r"[gcr]", 5: r"[bhl]", 6: r"[fkw]",
+    7: r"[jvy]", 8: r"qu|[zx]", 9: r"sh|ch", 10: r"th", 11: r"tch", 12: r"ck|ng",
+    13: r"wh|ph", 14: r"ss|ll|ff|zz",
     15: r"^(?:bl|cl|fl|gl|pl|sl|br|cr|dr|fr|gr|pr|tr|sc|sk|sm|sn|sp|st|sw)",
     16: r"(?:nd|nt|nk|mp|st|lt)$|^(?:spl|str|scr|spr|thr|shr|squ)",
-    17: r"[aeiou]$",
-    18: r"([aeiou])[^aeiou](e)$",
-    19: r"ai|ay",
-    20: r"ee|ea",
-    21: r"oa|ow",
-    22: r"igh|ie|y$",
-    23: r"y$",
-    24: r"oo|ew|ue|ui",
-    25: r"oo",
-    26: r"eigh",
-    27: r"ar",
-    28: r"ore|or",
-    29: r"er|ir|ur",
-    30: r"oi|oy",
-    31: r"ou|ow",
-    32: r"au|aw",
-    33: r"[cg](?=[eiy])",
-    34: r"kn|wr|mb|gn",
-    36: r"le$",
-    37: r"(?:es|ed|ing|s)$",
-    38: r"(?:est|er|ly)$",
-    39: r"^(?:un|re|dis)",
-    40: r"^(?:mis|pre)",
-    41: r"(?:ful|less|ness)$",
-    42: r"(?:tion|sion|ture)$",
+    17: r"[aeiou]$", 18: r"([aeiou])[^aeiou](e)$", 19: r"ai|ay", 20: r"ee|ea",
+    21: r"oa|ow", 22: r"igh|ie|y$", 23: r"y$", 24: r"oo|ew|ue|ui", 25: r"oo",
+    26: r"eigh", 27: r"ar", 28: r"ore|or", 29: r"er|ir|ur", 30: r"oi|oy", 31: r"ou|ow",
+    32: r"au|aw", 33: r"[cg](?=[eiy])", 34: r"kn|wr|mb|gn", 36: r"le$",
+    37: r"(?:es|ed|ing|s)$", 38: r"(?:est|er|ly)$", 39: r"^(?:un|re|dis)",
+    40: r"^(?:mis|pre)", 41: r"(?:ful|less|ness)$", 42: r"(?:tion|sion|ture)$",
 }
 
 # Page 35 (schwa): the weak vowel can't be found by spelling, so mark it by index.
@@ -83,16 +58,25 @@ SCHWA = {
     "pencil": [4], "problem": [5], "animal": [4], "lemon": [3],
 }
 
+GRAPHEMES = sorted([
+    "eigh", "tch", "igh", "ore", "ss", "ll", "ff", "zz", "sh", "ch", "th", "ck", "ng", "wh",
+    "ph", "qu", "ai", "ay", "ee", "ea", "oa", "ow", "ie", "oo", "ew", "ue", "ui", "ar", "or",
+    "er", "ir", "ur", "oi", "oy", "ou", "au", "aw", "kn", "wr", "mb", "gn",
+    "pp", "nn", "tt", "dd", "gg", "rr", "mm", "bb",
+], key=len, reverse=True)
 
+
+# ---------------------------------------------------------------- word logic
 def spans(page, word):
     """Return [(start, end)] character spans to highlight in word."""
+    w = word.lower()
     if page == 35:
-        return [(i, i + 1) for i in SCHWA.get(word, [])]
+        return [(i, i + 1) for i in SCHWA.get(w, [])]
     rule = RULES.get(page)
     if not rule:
         return []
     out = []
-    for m in re.finditer(rule, word):
+    for m in re.finditer(rule, w):
         if m.re.groups:
             out += [m.span(g) for g in range(1, m.re.groups + 1) if m.group(g)]
         else:
@@ -100,8 +84,8 @@ def spans(page, word):
     return out
 
 
-def render(word, sp, mode):
-    """mode 'hi' wraps spans in <b>, mode 'blank' replaces each letter with a box."""
+def render(word, sp, mode="hi"):
+    """'hi' colors spans, 'blank' turns each spanned letter into a box."""
     res, i = [], 0
     for s, e in sorted(sp):
         res.append(html.escape(word[i:s]))
@@ -113,6 +97,57 @@ def render(word, sp, mode):
         i = e
     res.append(html.escape(word[i:]))
     return "".join(res)
+
+
+def classify(page, word):
+    """Column label for the 소리 분류 activity."""
+    sp = spans(page, word)
+    if not sp:
+        return None
+    s, e = sp[0]
+    seg = word[s:e]
+    if page == 15:
+        return "s 블렌드" if seg[0] == "s" else ("l 블렌드" if seg[1] == "l" else "r 블렌드")
+    if page == 16:
+        return "3글자 자음군" if s == 0 else "끝 자음군"
+    if page == 18:
+        return seg + "_e"
+    if page == 33:
+        return "soft " + seg
+    if page in (37, 38, 41, 42):
+        return "-" + seg
+    if page in (39, 40):
+        return seg + "-"
+    return seg
+
+
+def chunks(page, word):
+    """Split a word into sound chunks for 소리 블렌딩. Returns [(text, silent)]."""
+    w = word.lower()
+    if page >= 35 and w in SYLLABLES:
+        return [(c, False) for c in SYLLABLES[w]]
+    if page >= 37:
+        sp = spans(page, w)
+        if sp:
+            s, e = sp[0]
+            return [(c, False) for c in (w[:s], w[s:e], w[e:]) if c]
+        return [(w, False)]
+    out, i = [], 0
+    # final e after a consonant is silent (cake, apple), except in short words like me/she
+    magic = len(w) >= 4 and w.endswith("e") and w[-2] not in "aeiou"
+    while i < len(w):
+        if magic and i == len(w) - 1:
+            out.append(("e", True))
+            break
+        for g in GRAPHEMES:
+            if w.startswith(g, i):
+                out.append((g, False))
+                i += len(g)
+                break
+        else:
+            out.append((w[i], False))
+            i += 1
+    return out
 
 
 def parse_words(text):
@@ -138,211 +173,461 @@ def load_rows():
         if r[0] is None:
             continue
         page, set_, sound, rule, read, dict_ = r[:6]
+        page = int(page)
+        words = parse_words(read)
+        for w in SUPPLEMENT.get(page, []):
+            if w not in [x for x, _ in words]:
+                words.append((w, "★"))
         rows.append(dict(
-            page=int(page), set=set_, sound=sound, rule=rule,
-            read=parse_words(read), dict=[w for w, _ in parse_words(dict_)],
+            page=page, set=set_, sound=sound, rule=rule, read=words[:16],
+            dict=[w for w, _ in parse_words(dict_)], color=SETS[set_][1],
         ))
     return rows
 
 
-CSS = """
-@page { size: A4; margin: 0; }
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; background: #fff; }
-body { font-variant-ligatures: none; font-family: 'Noto Sans KR', sans-serif; color: #1d2433; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.en { font-family: 'Andika', sans-serif; }
-.page { width: 210mm; height: 297mm; padding: 11mm 13mm 9mm; position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
-.page:last-child { page-break-after: auto; }
+# ---------------------------------------------------------------- activities
+def build_lesson_data(rows):
+    """Pre-compute every activity (and its answers) so pages and the key agree."""
+    by_page = {r["page"]: r for r in rows}
+    for r in rows:
+        p = r["page"]
+        rng = random.Random(p * 7919)
+        read = [w for w, _ in r["read"]]
 
-/* header */
-.hd { display: flex; align-items: stretch; gap: 4mm; margin-bottom: 4mm; }
-.hd .tag { background: var(--c); color: #fff; border-radius: 4mm; padding: 2.5mm 4mm; display: flex; flex-direction: column; justify-content: center; align-items: center; min-width: 24mm; }
-.hd .tag .set { font-size: 9pt; font-weight: 700; opacity: .9; }
-.hd .tag .no { font-size: 24pt; font-weight: 900; line-height: 1; }
-.hd .title { flex: 1; border: 0.6mm solid var(--c); border-radius: 4mm; padding: 2mm 5mm; display: flex; flex-direction: column; justify-content: center; }
-.hd .sound { font-family: 'Andika', sans-serif; font-weight: 700; color: var(--c); line-height: 1.15; }
-.hd .rule { font-size: 10pt; color: #4a5468; margin-top: 1mm; }
-.hd .meta { width: 38mm; border: 0.3mm solid #c9d0dc; border-radius: 4mm; padding: 2mm 3mm; font-size: 8.5pt; color: #4a5468; display: flex; flex-direction: column; justify-content: space-around; }
-.hd .meta .ln { border-bottom: 0.3mm solid #c9d0dc; padding-bottom: .5mm; }
-.stars { font-size: 13pt; color: #d6dbe4; letter-spacing: 1mm; }
+        # blend: read words not already used in the writing activities
+        pool = [w for w in read if w not in r["dict"]]
+        r["blend"] = (pool + [w for w in read if w not in pool])[:4]
 
-/* sections */
-.sec { margin-bottom: 4.5mm; }
-.sec h2 { font-size: 11pt; margin: 0 0 1.8mm; display: flex; align-items: center; gap: 2mm; }
-.sec h2 .n { background: var(--c); color: #fff; width: 6mm; height: 6mm; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 9pt; }
-.sec h2 small { font-weight: 400; color: #6b7487; font-size: 8.5pt; }
-.hi { color: var(--c); font-weight: 700; }
+        # sort (multi-spelling pages) or find-the-sound O/X (others)
+        if p in SORT:
+            cols = SORT[p]
+            bucket = {c: [w for w in read if classify(p, w) == c] for c in cols}
+            picked = []
+            while len(picked) < 10 and any(bucket.values()):
+                for c in cols:
+                    if bucket[c] and len(picked) < 10:
+                        picked.append(bucket[c].pop(0))
+            rng.shuffle(picked)
+            r["sort"] = (cols, picked, {c: [w for w in picked if classify(p, w) == c] for c in cols})
+        else:
+            today = [w for w in read if spans(p, w)][:6]
+            review = []
+            for q in range(p - 1, 0, -1):
+                for w, _ in by_page[q]["read"]:
+                    if not spans(p, w) and w not in review and w not in read and len(review) < 4:
+                        review.append(w)
+                if len(review) >= 4:
+                    break
+            items = today + review
+            rng.shuffle(items)
+            r["find"] = (items, today)
 
-.read { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2mm; }
-.read .w { border: 0.3mm solid #dfe3ea; border-radius: 2.5mm; padding: 1.6mm 1mm 1.2mm; text-align: center; background: #fafbfc; }
-.read .w .t { font-size: 19pt; line-height: 1.15; }
-.read .w .lab { font-size: 7pt; color: #8a93a6; font-family: 'Andika', sans-serif; }
-.read .w .ck { font-size: 8pt; color: #b6bdca; letter-spacing: 1mm; }
+        # spaced review: 2 words each from 1, 3 and 7 lessons back
+        r["review"] = []
+        for back in (1, 3, 7):
+            q = by_page.get(p - back)
+            if q:
+                ws = [w for w, _ in q["read"]]
+                a, b = ws[back % len(ws)], ws[(back * 3 + 1) % len(ws)]
+                if a == b:
+                    b = ws[(back * 3 + 2) % len(ws)]
+                r["review"].append((q, a, b))
 
-.trace .row { position: relative; height: 15mm; margin-bottom: 3.2mm; }
-.trace .row .g { position: absolute; left: 0; right: 0; }
-.trace .row .g1 { top: 0; border-top: 0.25mm solid #9aa3b5; }
-.trace .row .g2 { top: 5mm; border-top: 0.25mm dashed #c3c9d4; }
-.trace .row .g3 { top: 10mm; border-top: 0.35mm solid #e06b6b; }
-.trace .row .g4 { top: 15mm; border-top: 0.25mm solid #9aa3b5; }
-.trace .row .word { position: absolute; left: 2mm; top: -2.3mm; font-family: 'Andika', sans-serif; font-size: 40pt; line-height: 1; color: #c4cbd8; letter-spacing: .6mm; }
-.trace .row .sep { position: absolute; top: 0; bottom: 0; border-left: 0.3mm dotted #c9d0dc; }
+        # match: 4 words with glosses, dictation words first
+        match = []
+        for w in r["dict"] + read:
+            if w.lower() in GLOSS and w.lower() not in [m.lower() for m in match]:
+                match.append(w)
+        match = match[:4]
+        meanings = [GLOSS[w.lower()] for w in match]
+        rng.shuffle(meanings)
+        r["match"] = (match, meanings)
 
-.fill { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2mm; }
-.fill .f { border: 0.3mm solid #dfe3ea; border-radius: 2.5mm; padding: 2.5mm 1mm 2mm; text-align: center; }
-.fill .f .t { font-size: 16pt; line-height: 1.2; white-space: nowrap; }
-.fill .f .n { font-size: 7.5pt; color: #8a93a6; }
-.box { display: inline-block; width: 4.6mm; height: 6.2mm; border: 0.35mm solid var(--c); border-radius: 1mm; margin: 0 .25mm; vertical-align: -1mm; background: #fff; }
-.bank { font-size: 9pt; color: #4a5468; margin: -0.5mm 0 1.8mm; }
-.bank span { font-family: 'Andika', sans-serif; font-size: 11pt; color: var(--c); font-weight: 700; }
-
-.dict { display: grid; grid-template-columns: 1fr 1fr; gap: 0 8mm; }
-.dict .d { display: flex; align-items: flex-end; gap: 2mm; height: 12mm; border-bottom: 0.3mm solid #9aa3b5; font-size: 9pt; color: #8a93a6; padding-bottom: .8mm; }
-
-.ft { margin-top: auto; display: flex; justify-content: space-between; align-items: center; font-size: 8pt; color: #8a93a6; border-top: 0.3mm solid #e3e7ee; padding-top: 2mm; }
-.ft .sign { border: 0.3mm solid #c9d0dc; border-radius: 2mm; padding: 1mm 3mm; }
-
-/* cover / toc / key */
-.cover { justify-content: center; align-items: center; text-align: center; }
-.cover h1 { font-family: 'Andika', sans-serif; font-size: 48pt; margin: 0; color: #1d2433; }
-.cover .sub { font-size: 14pt; color: #4a5468; margin: 3mm 0 10mm; }
-.cover .letters { font-family: 'Andika', sans-serif; font-size: 30pt; font-weight: 700; letter-spacing: 3mm; margin-bottom: 12mm; }
-.cover .name { font-size: 13pt; border-bottom: 0.4mm solid #1d2433; width: 110mm; margin: 0 auto 4mm; text-align: left; padding: 2mm; }
-.cover .tracker { margin-top: 12mm; width: 170mm; text-align: left; }
-.cover .tracker h3 { font-size: 11pt; margin: 0 0 2mm; }
-.cover .tracker .rowset { display: flex; align-items: center; gap: 2mm; margin-bottom: 2mm; font-size: 9pt; }
-.cover .tracker .rowset .lbl { width: 14mm; font-weight: 700; }
-.cover .tracker .dot { width: 9mm; height: 9mm; border-radius: 50%; border: 0.4mm solid; display: inline-flex; align-items: center; justify-content: center; font-size: 8pt; color: #8a93a6; }
-.how { margin-top: 10mm; width: 170mm; text-align: left; font-size: 9.5pt; color: #4a5468; border: 0.3mm solid #dfe3ea; border-radius: 3mm; padding: 3mm 5mm; }
-.how ol { margin: 1mm 0 0; padding-left: 5mm; }
-
-h1.pt { font-size: 18pt; margin: 0 0 4mm; }
-table.toc { width: 100%; border-collapse: collapse; font-size: 8.4pt; }
-table.toc th { background: #1d2433; color: #fff; padding: 1.4mm 2mm; text-align: left; }
-table.toc td { padding: 1.05mm 2mm; border-bottom: 0.25mm solid #e3e7ee; vertical-align: top; }
-table.toc td.snd { font-family: 'Andika', sans-serif; font-weight: 700; }
-table.toc .chip { display: inline-block; color: #fff; border-radius: 1.5mm; padding: 0 1.5mm; font-size: 7.5pt; font-weight: 700; }
-table.key td.ans { font-family: 'Andika', sans-serif; font-size: 10pt; }
-"""
+        # sentences + word bank (two answers + one distractor)
+        sents = SENTENCES[p]
+        answers = [a.lower() for _, a in sents]
+        distract = [w for w in read if w.lower() not in answers]
+        bank = [a for _, a in sents] + distract[:1]
+        rng.shuffle(bank)
+        r["sent"] = (sents, bank)
+        r["dict_sentence"] = sents[0][0].replace("___", sents[0][1])
+    return rows
 
 
-def sound_size(text):
+def word_search(words, seed, size=10):
+    rng = random.Random(seed)
+    grid = [[None] * size for _ in range(size)]
+    placed = []
+    for w in words:
+        W = w.upper()
+        for _ in range(400):
+            d = rng.choice([(0, 1), (1, 0)])
+            r0 = rng.randrange(size - (len(W) - 1) * d[0])
+            c0 = rng.randrange(size - (len(W) - 1) * d[1])
+            cells = [(r0 + i * d[0], c0 + i * d[1]) for i in range(len(W))]
+            if all(grid[a][b] in (None, W[i]) for i, (a, b) in enumerate(cells)):
+                for i, (a, b) in enumerate(cells):
+                    grid[a][b] = W[i]
+                placed.append((w, cells))
+                break
+    sol = {cell for _, cells in placed for cell in cells}
+    grid = [[ch or rng.choice("ABCDEFGHIKLMNOPRSTUVWY") for ch in row] for row in grid]
+    return grid, placed, sol
+
+
+def build_reviews(rows):
+    reviews = {}
+    for s in SETS:
+        n = int(s[-1])
+        rng = random.Random(n * 977)
+        srows = [r for r in rows if r["set"] == s]
+
+        per = 2 if len(srows) <= 10 else 1
+        mixed = [(r, w) for r in srows for w, _ in r["read"][2:2 + per]][:20]
+
+        def first_seg(page, w):
+            sp = spans(page, w)
+            return (sp[0], w[sp[0][0]:sp[0][1]]) if sp else (None, None)
+
+        segs = []
+        for o in srows:
+            for ow in o["dict"]:
+                _, seg = first_seg(o["page"], ow)
+                if seg and o["page"] not in (35, 36) and seg not in segs:
+                    segs.append(seg)
+        choice = []
+        rr = [r for r in srows if r["page"] not in (35, 36)]
+        rng.shuffle(rr)
+        for r in rr:
+            if len(choice) == 8:
+                break
+            cands = [w for w in r["dict"] if spans(r["page"], w)]
+            w = next((w for w in cands if w.lower() in GLOSS), cands[0] if cands else None)
+            if not w:
+                continue
+            sp, right = first_seg(r["page"], w)
+            others = [x for x in segs if x != right]
+            wrong = rng.choice(others) if others else "?"
+            opts = [right, wrong]
+            rng.shuffle(opts)
+            choice.append((r, w, sp, opts))
+
+        pool = []
+        for r in srows:
+            for w in r["dict"]:
+                if 3 <= len(w) <= 7 and w.isalpha() and w not in pool:
+                    pool.append(w)
+        rng.shuffle(pool)
+        grid, placed, sol = word_search(pool[:8], n * 31)
+        used = {w for w, _ in placed}
+        reviews[s] = dict(rows=srows, mixed=mixed, choice=choice, grid=grid, placed=placed,
+                          sol=sol, dict=[w for w in pool if w not in used][:8])
+    return reviews
+
+
+# ---------------------------------------------------------------- html parts
+def sound_size(text, big=30):
     n = len(text)
-    return "30pt" if n <= 14 else "22pt" if n <= 26 else "15pt" if n <= 50 else "12pt"
+    if n <= 14:
+        return f"{big}pt"
+    if n <= 26:
+        return f"{big * .73:.0f}pt"
+    return f"{big * .5:.0f}pt" if n <= 50 else f"{big * .4:.0f}pt"
 
 
-def worksheet(r):
-    color = SETS.get(r["set"], ("", "#444"))[1]
+def header(r, part):
+    label = "A · 배우기" if part == "A" else "B · 연습"
+    return f"""
+  <div class="hd">
+    <div class="tag"><div class="set">{html.escape(r['set'])}</div><div class="no">{r['page']}</div><div class="part">{label}</div></div>
+    <div class="title"><div class="sound en" style="font-size:{sound_size(r['sound'], 30 if part == 'A' else 22)}">{html.escape(r['sound'])}</div>
+      <div class="rule">{html.escape(r['rule'])}</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>"""
+
+
+def footer(left, right):
+    return f"""
+  <div class="ft"><span>{left}</span><span class="sign">확인 ________</span><span>{right}</span></div>"""
+
+
+def lesson_footer(r, part):
+    return footer(f"Phonics Workbook · {r['set']} {SETS[r['set']][0]}", f"{r['page']}{part} / 42")
+
+
+def sec(n, title, hint, body, cls=""):
+    return f"""
+  <div class="sec {cls}"><h2><span class="n">{n}</span>{title} <small>{hint}</small></h2>{body}</div>"""
+
+
+def page_a(r):
     p = r["page"]
-    read_cells = []
+    tip = f'<div class="tip"><span class="ic">💡</span><div><b>소리 팁</b> {html.escape(TIPS[p])}</div></div>'
+
+    cells = []
     for w, tag in r["read"]:
-        lab = f'<div class="lab">{html.escape(tag)}</div>' if tag else ""
-        read_cells.append(
-            f'<div class="w"><div class="t en">{render(w, spans(p, w), "hi")}</div>{lab}'
-            f'<div class="ck">○○○</div></div>')
+        lab = ""
+        if tag == "★":
+            lab = '<span class="star">★</span>'
+        elif tag:
+            lab = f'<div class="lab">{html.escape(tag)}</div>'
+        cells.append(f'<div class="w">{lab}<div class="t en">{render(w, spans(p, w))}</div><div class="ck">○○○</div></div>')
+    legend = '<div class="legend">★ 보충 단어 — 원본 목차에 없던 소리를 채운 단어예요.</div>' \
+        if any(t == "★" for _, t in r["read"]) else ""
+    read = sec(1, "소리 내어 읽기", "색깔 글자 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.",
+               f'<div class="read">{"".join(cells)}</div>{legend}')
 
-    trace_rows = []
-    for w in r["dict"][:5]:
+    bl = []
+    for w in r["blend"]:
+        parts = "".join(f'<span class="chunk{" silent" if silent else ""}">{html.escape(c)}</span>'
+                        for c, silent in chunks(p, w))
+        bl.append(f'<div class="bl"><div class="parts en">{parts}</div><div class="arr">→</div><div class="wl"></div></div>')
+    hint = ("칸마다 소리를 하나씩 말하고, 빠르게 합쳐 읽은 뒤 단어를 써요." if p < 35
+            else "덩어리(음절·어미)를 하나씩 읽고, 합쳐 읽은 뒤 단어를 써요.")
+    if p == 18:
+        hint += " 회색 e는 소리 없는 Magic e!"
+    blend = sec(2, "소리 블렌딩", hint, f'<div class="blend">{"".join(bl)}</div>')
+
+    if "sort" in r:
+        cols, picked, _ = r["sort"]
+        bank = " ".join(f'<span class="chipw en">{html.escape(w)}</span>' for w in picked)
+        rows_per = max(2, -(-len(picked) // len(cols)) + 1)
+        colhtml = "".join(f'<div class="col"><div class="ch en">{html.escape(c)}</div>'
+                          + '<div class="cl"></div>' * rows_per + '</div>' for c in cols)
+        act = sec(3, "소리 분류", "단어를 읽고 같은 철자끼리 표에 옮겨 써요.",
+                  f'<div class="bank2">{bank}</div>'
+                  f'<div class="sort" style="grid-template-columns:repeat({len(cols)},1fr)">{colhtml}</div>')
+    else:
+        items, _ = r["find"]
+        cells = "".join(f'<div class="fx"><span class="en">{html.escape(w)}</span><span class="ox">○ ✕</span></div>'
+                        for w in items)
+        act = sec(3, "소리 찾기", f"오늘의 소리 <b class='hi en'>{html.escape(r['sound'])}</b> 가 있으면 ○, 없으면 ✕ 에 표시해요.",
+                  f'<div class="find">{cells}</div>')
+
+    rv = "".join(
+        f'<div class="rv" style="--c:{q["color"]}"><span class="pg">{q["page"]}쪽</span>'
+        f'<span class="en">{render(a, spans(q["page"], a))}</span>'
+        f'<span class="en">{render(b, spans(q["page"], b))}</span><span class="ck">○○</span></div>'
+        for q, a, b in r["review"])
+    if rv:
+        review = sec(4, "지난 소리 복습", "1·3·7쪽 전에 배운 단어를 다시 읽어요. 간격을 두고 다시 보면 오래 기억해요!",
+                     f'<div class="review">{rv}</div>')
+    else:
+        review = sec(4, "소리로 말하기", "알파벳 이름(에이, 이…)이 아니라 '소리'로 말해 봐요.",
+                     '<div class="review"><div class="rv"><span class="en">a /æ/ · e /ɛ/ · i /ɪ/ · o /ɒ/ · u /ʌ/</span>'
+                     '<span class="ck">○○○</span></div></div>')
+
+    return f"""
+<section class="page" style="--c:{r['color']}">{header(r, 'A')}{tip}{read}{blend}{act}{review}{lesson_footer(r, 'A')}
+</section>"""
+
+
+def page_b(r):
+    p = r["page"]
+    rows = []
+    for w in r["dict"][:4]:
         width = max(46, len(w) * 8.6 + 12)
-        trace_rows.append(
-            f'<div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div>'
-            f'<div class="g g4"></div><div class="word">{html.escape(w)}</div>'
-            f'<div class="sep" style="left:{width:.0f}mm"></div></div>')
+        rows.append(f'<div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div>'
+                    f'<div class="g g4"></div><div class="word">{html.escape(w)}</div>'
+                    f'<div class="sep" style="left:{width:.0f}mm"></div></div>')
+    trace = sec(5, "따라 쓰기", "회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.", "".join(rows), "trace")
 
-    fill_cells = []
+    fills = []
     for i, w in enumerate(r["dict"][:5], 1):
         sp = spans(p, w)
         t = render(w, sp, "blank") if sp else html.escape(w)
-        fill_cells.append(f'<div class="f"><div class="t en">{t}</div><div class="n">{i}</div></div>')
+        fills.append(f'<div class="f"><div class="t en">{t}</div><div class="n">{i}</div></div>')
+    fill = sec(6, "빈칸 채우기", f"힌트 소리: <b class='hi en'>{html.escape(r['sound'])}</b>",
+               f'<div class="fill">{"".join(fills)}</div>')
 
-    dict_lines = "".join(f'<div class="d">{i}.</div>' for i in range(1, 7))
+    words, meanings = r["match"]
+    left = "".join(f'<div class="mi"><span class="en">{html.escape(w)}</span><span class="dot">●</span></div>' for w in words)
+    right = "".join(f'<div class="mi r"><span class="dot">●</span><span>{html.escape(m)}</span></div>' for m in meanings)
+    sents, bank = r["sent"]
+    sl = "".join(
+        f'<div class="sn en"><span class="num">{i}.</span><span>{html.escape(s).replace("___", "<span class=blank></span>")}</span>'
+        f'<span class="ck">○○</span></div>' for i, (s, _) in enumerate(sents, 1))
+    bankh = " ".join(f'<span class="chipw en">{html.escape(w)}</span>' for w in bank)
+    duo = f"""
+  <div class="duo">
+    {sec(7, "뜻 연결", "단어와 뜻을 선으로 이어요.", f'<div class="match"><div>{left}</div><div>{right}</div></div>')}
+    {sec(8, "문장 완성", "빈칸에 단어를 쓰고 두 번 읽어요.", f'<div class="bank2">{bankh}</div>{sl}')}
+  </div>"""
 
+    lines = "".join(f'<div class="d">{i}.</div>' for i in range(1, 6))
+    dictation = sec(9, "받아쓰기", "단어 5개와 문장 1개를 듣고 써요. (불러 줄 말은 정답지에)",
+                    f'<div class="dict">{lines}<div class="d full">문장.</div></div>')
+
+    check = """
+  <div class="self"><b>자기 점검</b>
+    <span>오늘의 소리를 <b>읽을</b> 수 있어요 😀 🙂 😐</span>
+    <span><b>쓸</b> 수 있어요 😀 🙂 😐</span>
+    <span class="redo">틀린 단어 다시 쓰기</span></div>"""
     return f"""
-<section class="page" style="--c:{color}">
-  <div class="hd">
-    <div class="tag"><div class="set">{html.escape(r['set'])}</div><div class="no">{p}</div></div>
-    <div class="title"><div class="sound" style="font-size:{sound_size(r['sound'])}">{html.escape(r['sound'])}</div>
-      <div class="rule">{html.escape(r['rule'])}</div></div>
-    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
-  </div>
-
-  <div class="sec"><h2><span class="n">1</span>소리 내어 읽기 <small>색깔 글자의 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.</small></h2>
-    <div class="read">{''.join(read_cells)}</div></div>
-
-  <div class="sec trace"><h2><span class="n">2</span>따라 쓰기 <small>회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.</small></h2>
-    {''.join(trace_rows)}</div>
-
-  <div class="sec"><h2><span class="n">3</span>빈칸 채우기 <small>네모 칸에 들어갈 글자를 써요.</small></h2>
-    <div class="bank">힌트 소리: <span>{html.escape(r['sound'])}</span></div>
-    <div class="fill">{''.join(fill_cells)}</div></div>
-
-  <div class="sec"><h2><span class="n">4</span>받아쓰기 <small>불러 주는 단어를 듣고 써요. (정답은 맨 뒤)</small></h2>
-    <div class="dict">{dict_lines}</div></div>
-
-  <div class="ft"><span>Phonics Workbook · {html.escape(r['set'])} {html.escape(SETS.get(r['set'], ('',))[0])}</span>
-    <span class="sign">확인 ________</span><span>{p} / 42</span></div>
+<section class="page" style="--c:{r['color']}">{header(r, 'B')}{trace}{fill}{duo}{dictation}{check}{lesson_footer(r, 'B')}
 </section>"""
+
+
+def review_pages(set_name, rv):
+    col = SETS[set_name][1]
+    srows = rv["rows"]
+    hd = f"""
+  <div class="hd">
+    <div class="tag"><div class="set">{set_name}</div><div class="no" style="font-size:16pt">복습</div></div>
+    <div class="title"><div class="sound" style="font-size:19pt">{set_name} 총복습 — {html.escape(SETS[set_name][0])}</div>
+      <div class="rule">{srows[0]['page']}–{srows[-1]['page']}쪽에서 배운 소리를 섞어서 확인해요.</div></div>
+    <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
+  </div>"""
+    mixed = "".join(
+        f'<div class="w" style="--c:{r["color"]}"><div class="t en">{render(w, spans(r["page"], w))}</div>'
+        f'<div class="lab">{r["page"]}쪽</div></div>' for r, w in rv["mixed"])
+    s1 = sec(1, "섞어 읽기", "여러 소리가 섞여 있어요. 막히는 단어는 그 쪽으로 돌아가 팁을 다시 봐요.",
+             f'<div class="read r5">{mixed}</div>')
+    ch = []
+    for i, (r, w, (s0, e0), opts) in enumerate(rv["choice"], 1):
+        shown = html.escape(w[:s0]) + '<span class="blank sm"></span>' + html.escape(w[e0:])
+        gl = f'<span class="gl">({html.escape(GLOSS[w.lower()])})</span>' if w.lower() in GLOSS else ""
+        ch.append(f'<div class="cho"><span class="num">{i}.</span><span class="en">{shown}</span>{gl}'
+                  f'<span class="opts en">{html.escape(opts[0])}&nbsp;/&nbsp;{html.escape(opts[1])}</span></div>')
+    s2 = sec(2, "알맞은 철자 고르기", "뜻을 힌트로, 두 철자 중 맞는 것에 ○ 하고 빈칸에 써요.", f'<div class="choice">{"".join(ch)}</div>')
+    lines = "".join(f'<div class="d">{i}.</div>' for i in range(1, 9))
+    s3 = sec(3, "받아쓰기", "단어 8개를 듣고 써요. (불러 줄 단어는 정답지에)", f'<div class="dict">{lines}</div>')
+    p1 = f'<section class="page" style="--c:{col}">{hd}{s1}{s2}{s3}{footer(f"Phonics Workbook · {set_name} 총복습", "복습 1/2")}</section>'
+
+    grid = "".join("<tr>" + "".join(f"<td>{c}</td>" for c in row) + "</tr>" for row in rv["grid"])
+    wl = "".join(f'<div class="wsw en">☐ {html.escape(w)}</div>' for w, _ in rv["placed"])
+    s4 = sec(4, "낱말 찾기", "숨은 단어를 찾아 동그라미 해요. (→ 오른쪽, ↓ 아래쪽)",
+             f'<div class="ws"><table class="wsg en">{grid}</table><div class="wsl">{wl}</div></div>')
+    trs = "".join(
+        f'<tr><td>{r["page"]}</td><td class="en" style="color:{r["color"]};font-weight:700">{html.escape(r["sound"])}</td>'
+        f'<td>😀 🙂 😐</td><td>😀 🙂 😐</td><td></td></tr>' for r in srows)
+    s5 = sec(5, "나의 실력 체크", "어려운 쪽은 '다시 볼 날'을 적고 한 번 더 공부해요.",
+             f'<table class="self-t"><tr><th>쪽</th><th>소리</th><th>읽기</th><th>쓰기</th><th>다시 볼 날</th></tr>{trs}</table>')
+    p2 = f'<section class="page" style="--c:{col}">{hd}{s4}{s5}{footer(f"Phonics Workbook · {set_name} 총복습", "복습 2/2")}</section>'
+    return p1 + p2
 
 
 def cover(rows):
     tracker = []
-    for s, (name, col) in SETS.items():
-        dots = "".join(
-            f'<span class="dot" style="border-color:{col}">{r["page"]}</span>'
-            for r in rows if r["set"] == s)
-        tracker.append(f'<div class="rowset"><span class="lbl" style="color:{col}">{s}</span>{dots}</div>')
+    for s, (_, col) in SETS.items():
+        dots = "".join(f'<span class="dot" style="border-color:{col}"><b>{r["page"]}</b><i>A B</i></span>'
+                       for r in rows if r["set"] == s)
+        tracker.append(f'<div class="rowset"><span class="lbl" style="color:{col}">{s}</span>{dots}'
+                       f'<span class="dot rvd" style="border-color:{col};color:{col}">복습</span></div>')
+    n_words = sum(len(r["read"]) for r in rows)
     return f"""
 <section class="page cover">
-  <h1>Phonics Workbook</h1>
-  <div class="sub">파닉스 워크북 · 5 Sets · 42 Pages · {sum(len(r['read']) for r in rows)} Words</div>
-  <div class="letters"><span style="color:#E4572E">a</span> <span style="color:#2E86AB">sh</span> <span style="color:#3BA55C">ee</span> <span style="color:#8E5BD0">ar</span> <span style="color:#E09F1F">-tion</span></div>
+  <h1 class="en">Phonics Workbook</h1>
+  <div class="sub">파닉스 워크북 · 5 Sets · 42 Lessons · {n_words} Words</div>
+  <div class="letters en"><span style="color:#E4572E">a</span> <span style="color:#2E86AB">sh</span> <span style="color:#3BA55C">ee</span> <span style="color:#8E5BD0">ar</span> <span style="color:#E09F1F">-tion</span></div>
   <div class="name">이름 :</div>
   <div class="name">시작한 날 :</div>
-  <div class="tracker"><h3>진도표 — 끝낸 페이지에 색칠하거나 스티커를 붙여요</h3>{''.join(tracker)}</div>
-  <div class="how"><b>하루 한 장 사용법</b><ol>
-    <li><b>읽기</b> — 색깔 글자 소리를 크게 말하며 단어를 3번 읽어요.</li>
-    <li><b>따라 쓰기</b> — 회색 글자를 따라 쓰고 두 번 더 써요. 빨간 선이 글자가 앉는 줄이에요.</li>
-    <li><b>빈칸 채우기</b> — 오늘 배운 소리 글자로 네모를 채워요.</li>
-    <li><b>받아쓰기</b> — 어른이 맨 뒤 정답표의 단어를 불러 주면 들리는 대로 써요.</li></ol></div>
+  <div class="tracker"><h3>진도표 — 끝낸 A·B에 색칠하거나 스티커를 붙여요</h3>{''.join(tracker)}</div>
+</section>"""
+
+
+def guide():
+    return """
+<section class="page guide" style="--c:#1d2433">
+  <h1 class="pt">이렇게 공부해요</h1>
+  <div class="gbox"><h3>하루 10~15분, 한 소리를 이틀에 걸쳐</h3>
+  <table class="gt">
+    <tr><th>날</th><th>쪽</th><th>활동</th><th>왜 하나요?</th></tr>
+    <tr><td>1일차</td><td><b>A 배우기</b></td><td>💡 소리 팁 → ① 읽기 → ② 블렌딩 → ③ 찾기·분류 → ④ 복습</td><td>소리를 귀와 입으로 익히고 글자와 연결해요.</td></tr>
+    <tr><td>2일차</td><td><b>B 연습</b></td><td>⑤ 따라 쓰기 → ⑥ 빈칸 → ⑦ 뜻 → ⑧ 문장 → ⑨ 받아쓰기</td><td>소리를 철자로 직접 써 보면 더 오래 기억해요.</td></tr>
+    <tr><td>Set 끝</td><td><b>총복습</b></td><td>섞어 읽기 · 철자 고르기 · 받아쓰기 · 낱말 찾기 · 실력 체크</td><td>섞어서 꺼내 보는 연습이 진짜 실력이 돼요.</td></tr>
+  </table></div>
+
+  <div class="gbox"><h3>활동별 진행 팁 (어른용)</h3>
+  <ul>
+    <li><b>💡 소리 팁</b> — 입 모양을 거울로 같이 보며 소리를 3번 따라 해요.</li>
+    <li><b>① 읽기</b> — 색깔 글자를 먼저 소리 내고 단어 전체를 읽어요. 한 번 읽을 때마다 ○ 하나. 속도보다 정확도가 먼저예요.</li>
+    <li><b>② 블렌딩</b> — 칸 하나에 소리 하나. 손가락으로 칸을 짚으며 /c/ /a/ /t/ → cat. 회색 칸은 소리 없는 글자예요.</li>
+    <li><b>③ 찾기·분류</b> — 같은 소리라도 철자가 다를 수 있어요. 눈으로 비교하며 분류하고 정답지로 확인해요.</li>
+    <li><b>④ 복습</b> — 1·3·7쪽 전 단어가 다시 나와요(간격 반복). 막히면 그 쪽으로 돌아가요.</li>
+    <li><b>⑤ 따라 쓰기</b> — 빨간 선은 글자가 앉는 줄, 점선은 소문자 높이예요. 쓰면서 소리를 작게 말해요.</li>
+    <li><b>⑦ 뜻 · ⑧ 문장</b> — 읽은 단어의 뜻을 알면 기억이 단단해져요. 문장은 손가락으로 짚으며 두 번 읽어요.</li>
+    <li><b>⑨ 받아쓰기</b> — 정답지의 단어와 문장을 자연스러운 속도로 두 번 불러 줘요. 틀린 단어는 '자기 점검' 칸에 다시 써요.</li>
+  </ul></div>
+
+  <div class="gbox"><h3>기호 안내</h3>
+  <div class="sym"><span><b class="hi" style="color:#E4572E">색깔 글자</b> 오늘의 소리</span><span>○○○ 읽은 횟수</span>
+  <span><span class="box" style="--c:#2E86AB"></span> 소리 글자를 쓰는 칸</span><span><span class="star">★</span> 보충 단어</span>
+  <span><span class="chunk silent en">e</span> 소리 없는 글자</span></div></div>
 </section>"""
 
 
 def toc(rows):
     trs = []
     for r in rows:
-        col = SETS[r["set"]][1]
         trs.append(
-            f'<tr><td>{r["page"]}</td><td><span class="chip" style="background:{col}">{r["set"]}</span></td>'
-            f'<td class="snd" style="color:{col}">{html.escape(r["sound"])}</td><td>{html.escape(r["rule"])}</td></tr>')
+            f'<tr><td>{r["page"]}</td><td><span class="chip" style="background:{r["color"]}">{r["set"]}</span></td>'
+            f'<td class="snd en" style="color:{r["color"]}">{html.escape(r["sound"])}</td><td>{html.escape(r["rule"])}</td></tr>')
+        if r["page"] in SET_END:
+            trs.append(f'<tr class="rvrow"><td></td><td colspan="3">↳ {r["set"]} 총복습 (2쪽)</td></tr>')
     return f"""
-<section class="page"><h1 class="pt">목차</h1>
+<section class="page"><h1 class="pt">목차 <small>각 소리는 A(배우기)·B(연습) 2쪽</small></h1>
 <table class="toc"><tr><th>쪽</th><th>세트</th><th>소리</th><th>묶음 기준</th></tr>{''.join(trs)}</table></section>"""
 
 
-def key(rows):
-    pages = []
-    for half in (rows[:21], rows[21:]):
-        trs = "".join(
-            f'<tr><td>{r["page"]}</td><td class="snd" style="color:{SETS[r["set"]][1]}">{html.escape(r["sound"])}</td>'
-            f'<td class="ans">{html.escape(", ".join(r["dict"]))}</td></tr>' for r in half)
+def key(rows, reviews):
+    blocks = []
+    for r in rows:
+        if "sort" in r:
+            cols, _, ans = r["sort"]
+            a3 = "③ 분류 — " + " · ".join(
+                f"<b>{html.escape(c)}</b>: <span class='en'>{html.escape(', '.join(ans[c]) or '-')}</span>" for c in cols)
+        else:
+            a3 = "③ ○ — <span class='en'>" + html.escape(", ".join(r["find"][1])) + "</span> (나머지 ✕)"
+        a7 = "⑦ " + html.escape(", ".join(f"{w} = {GLOSS[w.lower()]}" for w in r["match"][0]))
+        a8 = "⑧ <span class='en'>" + html.escape(", ".join(a for _, a in r["sent"][0])) + "</span>"
+        a9 = ("⑥·⑨ 단어 — <b class='en'>" + html.escape(", ".join(r["dict"][:5])) + "</b>"
+              "<br>⑨ 문장 — <b class='en'>" + html.escape(r["dict_sentence"]) + "</b>")
+        blocks.append(
+            f'<tr><td class="kp" style="color:{r["color"]}">{r["page"]}</td><td>{a9}<br>{a3}<br>{a7}<br>{a8}</td></tr>')
+        if r["page"] in SET_END:
+            rv = reviews[r["set"]]
+            cho = ", ".join(f'{i}. {w}' for i, (_, w, _, _) in enumerate(rv["choice"], 1))
+            blocks.append(
+                f'<tr class="rvrow"><td class="kp">복습</td><td><b>{r["set"]} 총복습</b><br>'
+                f'② 철자 — <span class="en">{html.escape(cho)}</span><br>'
+                f'③ 받아쓰기 — <b class="en">{html.escape(", ".join(rv["dict"]))}</b><br>'
+                f'④ 낱말 찾기 — <span class="en">{html.escape(", ".join(w for w, _ in rv["placed"]))}</span></td></tr>')
+    pages, per = [], 8
+    for i in range(0, len(blocks), per):
         pages.append(f"""
-<section class="page"><h1 class="pt">정답 · 받아쓰기 단어 ({half[0]['page']}–{half[-1]['page']}쪽)</h1>
-<p style="font-size:9pt;color:#6b7487;margin:-2mm 0 3mm">3번 빈칸 채우기와 4번 받아쓰기의 정답입니다. 받아쓰기는 순서를 섞어 불러 줘도 좋아요.</p>
-<table class="toc key"><tr><th>쪽</th><th>소리</th><th>단어</th></tr>{trs}</table></section>""")
+<section class="page"><h1 class="pt">정답 · 불러 주기 ({i // per + 1})</h1>
+<table class="key">{''.join(blocks[i:i + per])}</table></section>""")
+    grids = []
+    for s, rv in reviews.items():
+        g = "".join("<tr>" + "".join(
+            f'<td class="{"on" if (a, b) in rv["sol"] else ""}">{c}</td>' for b, c in enumerate(row)) + "</tr>"
+            for a, row in enumerate(rv["grid"]))
+        grids.append(f'<div class="kg" style="--c:{SETS[s][1]}"><div class="kgt">{s}</div><table class="wsg sm en">{g}</table></div>')
+    pages.append(f"""
+<section class="page"><h1 class="pt">정답 · 낱말 찾기</h1><div class="kgs">{''.join(grids)}</div></section>""")
     return "".join(pages)
 
 
 def build():
-    rows = load_rows()
-    body = cover(rows) + toc(rows) + "".join(worksheet(r) for r in rows) + key(rows)
+    rows = build_lesson_data(load_rows())
+    reviews = build_reviews(rows)
+    body = [cover(rows), guide(), toc(rows)]
+    for r in rows:
+        body += [page_a(r), page_b(r)]
+        if r["page"] in SET_END:
+            body.append(review_pages(r["set"], reviews[r["set"]]))
+    body.append(key(rows, reviews))
+    with open(CSS_FILE, encoding="utf-8") as f:
+        css = f.read()
     doc = f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>Phonics Workbook</title>
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
-<style>{CSS}</style></head><body>{body}</body></html>"""
+<style>{css}</style></head><body>{''.join(body)}</body></html>"""
     with open(OUT_HTML, "w", encoding="utf-8") as f:
         f.write(doc)
     subprocess.run([
         CHROME, "--headless", "--no-sandbox", "--disable-gpu", "--no-pdf-header-footer",
-        "--virtual-time-budget=15000", f"--print-to-pdf={OUT_PDF}", "file://" + OUT_HTML,
+        "--virtual-time-budget=20000", f"--print-to-pdf={OUT_PDF}", "file://" + OUT_HTML,
     ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print("wrote", OUT_HTML, OUT_PDF, file=sys.stderr)
 
