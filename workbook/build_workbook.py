@@ -3,9 +3,10 @@
 Usage:
     python workbook/build_workbook.py      # writes workbook/phonics_workbook.html + .pdf
 
-Every TOC row becomes a two-page lesson:
-  A 배우기  — 소리 팁, 읽기, 소리 블렌딩, 소리 찾기/분류, 지난 소리 복습
-  B 연습    — 따라 쓰기, 빈칸 채우기, 뜻 연결, 문장 완성, 받아쓰기, 자기 점검
+Every TOC row becomes a three-page lesson:
+  A 배우기  — 소리 팁(+QR), 읽기, 소리 블렌딩, 소리 찾기/분류, 지난 소리 복습
+  B 연습    — 따라 쓰기, 빈칸 채우기, 그림·뜻 연결, 문장 완성, 받아쓰기(+QR), 자기 점검
+  C 쓰기    — 그림 보고 쓰기, 보고 쓰기, 문장 따라 쓰기·옮겨 쓰기, 나만의 문장
 Each Set ends with two review pages, and the answer key is at the back.
 """
 import html
@@ -14,12 +15,14 @@ import random
 import re
 import subprocess
 import sys
+from urllib.parse import quote, quote_plus
 
 import openpyxl
+import segno
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from content import GLOSS, SENTENCES, SORT, SUPPLEMENT, SYLLABLES, TIPS  # noqa: E402
+from content import EMOJI, FRAMES, GLOSS, SENTENCES, SORT, SUPPLEMENT, SYLLABLES, TIPS  # noqa: E402
 
 SRC = os.path.join(HERE, "phonics_toc.xlsx")
 CSS_FILE = os.path.join(HERE, "workbook.css")
@@ -251,6 +254,19 @@ def build_lesson_data(rows):
         rng.shuffle(bank)
         r["sent"] = (sents, bank)
         r["dict_sentence"] = sents[0][0].replace("___", sents[0][1])
+        r["full_sentences"] = [t.replace("___", a) for t, a in sents]
+
+        # C page: picture writing (emoji first, then meaning-only), then copy-writing words
+        allw = []
+        for w in r["dict"] + read:
+            if w.lower() not in [x.lower() for x in allw]:
+                allw.append(w)
+        pics = [w for w in allw if w.lower() in EMOJI][:9]
+        pics += [w for w in allw if w not in pics and w.lower() in GLOSS][:9 - len(pics)]
+        r["pictures"] = pics[:6]
+        rest = [w for w in r["blend"] + read if w not in pics and w not in r["dict"]]
+        r["copy"] = list(dict.fromkeys(rest + [w for w in read if w not in rest]))[:3]
+        r["frames"] = [FRAMES[p % len(FRAMES)], FRAMES[(p + 2) % len(FRAMES)]]
     return rows
 
 
@@ -336,11 +352,11 @@ def sound_size(text, big=30):
 
 
 def header(r, part):
-    label = "A · 배우기" if part == "A" else "B · 연습"
+    label = {"A": "A · 배우기", "B": "B · 연습", "C": "C · 쓰기"}[part]
     return f"""
   <div class="hd">
     <div class="tag"><div class="set">{html.escape(r['set'])}</div><div class="no">{r['page']}</div><div class="part">{label}</div></div>
-    <div class="title"><div class="sound en" style="font-size:{sound_size(r['sound'], 30 if part == 'A' else 22)}">{html.escape(r['sound'])}</div>
+    <div class="title"><div class="sound en" style="font-size:{sound_size(r['sound'], 30 if part == 'A' else 20)}">{html.escape(r['sound'])}</div>
       <div class="rule">{html.escape(r['rule'])}</div></div>
     <div class="meta"><div class="ln">날짜&nbsp;&nbsp;&nbsp;&nbsp;/</div><div>오늘의 별</div><div class="stars">★★★</div></div>
   </div>"""
@@ -360,9 +376,50 @@ def sec(n, title, hint, body, cls=""):
   <div class="sec {cls}"><h2><span class="n">{n}</span>{title} <small>{hint}</small></h2>{body}</div>"""
 
 
+def pic(w):
+    return EMOJI.get(w.lower(), "")
+
+
+def qr(url, label, sub):
+    svg = segno.make(url, error="l").svg_inline(scale=1, border=0, dark="#1d2433")
+    return f'<div class="qr"><div class="qimg">{svg}</div><div class="qt"><b>{label}</b><span>{sub}</span></div></div>'
+
+
+def listen_url(words):
+    return "https://translate.google.com/?sl=en&tl=ko&op=translate&text=" + quote("\n".join(words))
+
+
+VIDEO_QUERY = {
+    15: "phonics beginning blends l r s", 16: "phonics ending blends", 17: "phonics open syllable long vowel",
+    18: "phonics magic e silent e", 35: "schwa sound for kids", 36: "six syllable types for kids",
+    37: "phonics suffix s es ed ing", 38: "suffix er est ly for kids", 39: "prefix un re dis for kids",
+    40: "prefix mis pre for kids", 41: "suffix ful less ness for kids", 42: "tion sion ture phonics",
+}
+
+
+def video_url(sound, page=0):
+    if page in VIDEO_QUERY:
+        return "https://www.youtube.com/results?search_query=" + quote_plus(VIDEO_QUERY[page])
+    q = re.sub(r"[^\x00-\x7f]", " ", sound)
+    q = re.sub(r"\(\s*\)|[·()]", " ", q)
+    return "https://www.youtube.com/results?search_query=" + quote_plus(" ".join(f"phonics {q} sound".split()))
+
+
+def guide_row(h, text="", cls="", seps=(), left=0):
+    """A 4-line handwriting guide h mm tall. text is drawn so its x-height fills the middle band."""
+    word = (f'<div class="word {cls}" style="font-size:{40 * h / 15:.1f}pt;top:{-2.3 * h / 15:.2f}mm;left:{left + 2}mm">'
+            f'{html.escape(text)}</div>') if text else ""
+    sep = "".join(f'<div class="sep" style="left:{x:.0f}mm"></div>' for x in seps)
+    return (f'<div class="row" style="height:{h}mm"><div class="g g1"></div>'
+            f'<div class="g g2" style="top:{h / 3:.2f}mm"></div><div class="g g3" style="top:{2 * h / 3:.2f}mm"></div>'
+            f'<div class="g g4" style="top:{h}mm"></div>{word}{sep}</div>')
+
+
 def page_a(r):
     p = r["page"]
-    tip = f'<div class="tip"><span class="ic">💡</span><div><b>소리 팁</b> {html.escape(TIPS[p])}</div></div>'
+    tip = (f'<div class="tiprow"><div class="tip"><span class="ic">💡</span><div><b>소리 팁</b> {html.escape(TIPS[p])}</div></div>'
+           f'{qr(listen_url([w for w, _ in r["read"]]), "단어 듣기", "찍으면 발음이 나와요")}'
+           f'{qr(video_url(r["sound"], p), "소리 영상", "파닉스 노래·영상")}</div>')
 
     cells = []
     for w, tag in r["read"]:
@@ -371,7 +428,8 @@ def page_a(r):
             lab = '<span class="star">★</span>'
         elif tag:
             lab = f'<div class="lab">{html.escape(tag)}</div>'
-        cells.append(f'<div class="w">{lab}<div class="t en">{render(w, spans(p, w))}</div><div class="ck">○○○</div></div>')
+        em = f'<span class="em">{pic(w)}</span>' if pic(w) else ""
+        cells.append(f'<div class="w">{em}{lab}<div class="t en">{render(w, spans(p, w))}</div><div class="ck">○○○</div></div>')
     legend = '<div class="legend">★ 보충 단어 — 원본 목차에 없던 소리를 채운 단어예요.</div>' \
         if any(t == "★" for _, t in r["read"]) else ""
     read = sec(1, "소리 내어 읽기", "색깔 글자 소리에 집중! 한 번 읽을 때마다 ○ 하나씩 칠해요.",
@@ -425,7 +483,7 @@ def page_a(r):
 def page_b(r):
     p = r["page"]
     rows = []
-    for w in r["dict"][:4]:
+    for w in r["dict"][:5]:
         width = max(46, len(w) * 8.6 + 12)
         rows.append(f'<div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div>'
                     f'<div class="g g4"></div><div class="word">{html.escape(w)}</div>'
@@ -442,7 +500,9 @@ def page_b(r):
 
     words, meanings = r["match"]
     left = "".join(f'<div class="mi"><span class="en">{html.escape(w)}</span><span class="dot">●</span></div>' for w in words)
-    right = "".join(f'<div class="mi r"><span class="dot">●</span><span>{html.escape(m)}</span></div>' for m in meanings)
+    emo = {GLOSS[w.lower()]: pic(w) for w in words}
+    right = "".join(f'<div class="mi r"><span class="dot">●</span><span class="pe">{emo.get(m, "")}</span>'
+                    f'<span>{html.escape(m)}</span></div>' for m in meanings)
     sents, bank = r["sent"]
     sl = "".join(
         f'<div class="sn en"><span class="num">{i}.</span><span>{html.escape(s).replace("___", "<span class=blank></span>")}</span>'
@@ -450,13 +510,14 @@ def page_b(r):
     bankh = " ".join(f'<span class="chipw en">{html.escape(w)}</span>' for w in bank)
     duo = f"""
   <div class="duo">
-    {sec(7, "뜻 연결", "단어와 뜻을 선으로 이어요.", f'<div class="match"><div>{left}</div><div>{right}</div></div>')}
+    {sec(7, "그림·뜻 연결", "단어와 그림·뜻을 선으로 이어요.", f'<div class="match"><div>{left}</div><div>{right}</div></div>')}
     {sec(8, "문장 완성", "빈칸에 단어를 쓰고 두 번 읽어요.", f'<div class="bank2">{bankh}</div>{sl}')}
   </div>"""
 
     lines = "".join(f'<div class="d">{i}.</div>' for i in range(1, 6))
-    dictation = sec(9, "받아쓰기", "단어 5개와 문장 1개를 듣고 써요. (불러 줄 말은 정답지에)",
-                    f'<div class="dict">{lines}<div class="d full">문장.</div></div>')
+    dq = qr(listen_url(r["dict"][:5] + [r["dict_sentence"]]), "혼자 받아쓰기", "QR로 듣고 써요")
+    dictation = sec(9, "받아쓰기", "단어 5개와 문장 1개를 듣고 써요. (어른이 불러 주거나 QR로 들어요)",
+                    f'<div class="dwrap"><div class="dict">{lines}<div class="d full">문장.</div></div>{dq}</div>')
 
     check = """
   <div class="self"><b>자기 점검</b>
@@ -465,6 +526,44 @@ def page_b(r):
     <span class="redo">틀린 단어 다시 쓰기</span></div>"""
     return f"""
 <section class="page" style="--c:{r['color']}">{header(r, 'B')}{trace}{fill}{duo}{dictation}{check}{lesson_footer(r, 'B')}
+</section>"""
+
+
+def page_c(r):
+    p = r["page"]
+    cells = []
+    for w in r["pictures"]:
+        e = pic(w)
+        top = (f'<span class="pe">{e}</span><span class="gl">{html.escape(GLOSS.get(w.lower(), ""))}</span>' if e
+               else f'<span class="gl big">{html.escape(GLOSS.get(w.lower(), ""))}</span>')
+        cells.append(f'<div class="pc"><div class="ptop">{top}<span class="cnt">{"□" * len(w)}</span></div>'
+                     f'{guide_row(12)}</div>')
+    s10 = sec(10, "그림 보고 쓰기", "그림과 뜻을 보고 영어 단어를 써요. □는 글자 수예요. 막히면 A쪽 읽기 칸을 봐요.",
+              f'<div class="pics">{"".join(cells)}</div>')
+
+    rows = []
+    for w in r["copy"]:
+        n = 3 if len(w) <= 5 else 2
+        width = 160 / n
+        rows.append(f'<div class="cp"><div class="model en">{render(w, spans(p, w))}</div>'
+                    f'<div class="cg">{guide_row(13, seps=[width * i for i in range(1, n)])}</div></div>')
+    s11 = sec(11, "보고 쓰기", "왼쪽 단어를 보고, 소리를 말하면서 칸마다 한 번씩 써요.", "".join(rows))
+
+    srows = []
+    for t in r["full_sentences"]:
+        srows.append(f'{guide_row(11, t, "sent")}<div class="gap"></div>{guide_row(11)}')
+    s12 = sec(12, "문장 따라 쓰기 · 옮겨 쓰기", "윗줄은 회색 글자를 따라 쓰고, 아랫줄에는 혼자 써요.",
+              '<div class="gap2"></div>'.join(srows))
+
+    fr = "".join(
+        f'<div class="frm"><span class="en fr">{html.escape(f).replace("___", "<span class=blank></span>")}</span>'
+        f'{guide_row(11)}</div>' for f in r["frames"])
+    s13 = sec(13, "나만의 문장", "오늘 배운 단어를 빈칸에 넣어 문장을 완성해서 써요.", fr)
+    redo = "".join(f'<div class="cp"><div class="model blankm"></div><div class="cg">{guide_row(13, seps=[53, 106])}</div></div>'
+                   for _ in range(1))
+    s14 = sec(14, "틀린 단어 다시 쓰기", "B쪽에서 틀린 단어를 왼쪽 칸에 쓰고 세 번 더 써요. 다 맞았으면 좋아하는 단어로!", redo)
+    return f"""
+<section class="page pc-page" style="--c:{r['color']}">{header(r, 'C')}{s10}{s11}{s12}{s13}{s14}{lesson_footer(r, 'C')}
 </section>"""
 
 
@@ -510,7 +609,7 @@ def review_pages(set_name, rv):
 def cover(rows):
     tracker = []
     for s, (_, col) in SETS.items():
-        dots = "".join(f'<span class="dot" style="border-color:{col}"><b>{r["page"]}</b><i>A B</i></span>'
+        dots = "".join(f'<span class="dot" style="border-color:{col}"><b>{r["page"]}</b><i>A B C</i></span>'
                        for r in rows if r["set"] == s)
         tracker.append(f'<div class="rowset"><span class="lbl" style="color:{col}">{s}</span>{dots}'
                        f'<span class="dot rvd" style="border-color:{col};color:{col}">복습</span></div>')
@@ -522,7 +621,7 @@ def cover(rows):
   <div class="letters en"><span style="color:#E4572E">a</span> <span style="color:#2E86AB">sh</span> <span style="color:#3BA55C">ee</span> <span style="color:#8E5BD0">ar</span> <span style="color:#E09F1F">-tion</span></div>
   <div class="name">이름 :</div>
   <div class="name">시작한 날 :</div>
-  <div class="tracker"><h3>진도표 — 끝낸 A·B에 색칠하거나 스티커를 붙여요</h3>{''.join(tracker)}</div>
+  <div class="tracker"><h3>진도표 — 끝낸 A·B·C에 색칠하거나 스티커를 붙여요</h3>{''.join(tracker)}</div>
 </section>"""
 
 
@@ -530,11 +629,12 @@ def guide():
     return """
 <section class="page guide" style="--c:#1d2433">
   <h1 class="pt">이렇게 공부해요</h1>
-  <div class="gbox"><h3>하루 10~15분, 한 소리를 이틀에 걸쳐</h3>
+  <div class="gbox"><h3>하루 10~15분, 한 소리를 사흘에 걸쳐</h3>
   <table class="gt">
     <tr><th>날</th><th>쪽</th><th>활동</th><th>왜 하나요?</th></tr>
     <tr><td>1일차</td><td><b>A 배우기</b></td><td>💡 소리 팁 → ① 읽기 → ② 블렌딩 → ③ 찾기·분류 → ④ 복습</td><td>소리를 귀와 입으로 익히고 글자와 연결해요.</td></tr>
     <tr><td>2일차</td><td><b>B 연습</b></td><td>⑤ 따라 쓰기 → ⑥ 빈칸 → ⑦ 뜻 → ⑧ 문장 → ⑨ 받아쓰기</td><td>소리를 철자로 직접 써 보면 더 오래 기억해요.</td></tr>
+    <tr><td>3일차</td><td><b>C 쓰기</b></td><td>⑩ 그림 보고 쓰기 → ⑪ 보고 쓰기 → ⑫ 문장 따라·옮겨 쓰기 → ⑬ 나만의 문장 → ⑭ 틀린 단어 다시 쓰기</td><td>단어에서 문장까지 손으로 써서 철자를 굳혀요.</td></tr>
     <tr><td>Set 끝</td><td><b>총복습</b></td><td>섞어 읽기 · 철자 고르기 · 받아쓰기 · 낱말 찾기 · 실력 체크</td><td>섞어서 꺼내 보는 연습이 진짜 실력이 돼요.</td></tr>
   </table></div>
 
@@ -547,7 +647,9 @@ def guide():
     <li><b>④ 복습</b> — 1·3·7쪽 전 단어가 다시 나와요(간격 반복). 막히면 그 쪽으로 돌아가요.</li>
     <li><b>⑤ 따라 쓰기</b> — 빨간 선은 글자가 앉는 줄, 점선은 소문자 높이예요. 쓰면서 소리를 작게 말해요.</li>
     <li><b>⑦ 뜻 · ⑧ 문장</b> — 읽은 단어의 뜻을 알면 기억이 단단해져요. 문장은 손가락으로 짚으며 두 번 읽어요.</li>
-    <li><b>⑨ 받아쓰기</b> — 정답지의 단어와 문장을 자연스러운 속도로 두 번 불러 줘요. 틀린 단어는 '자기 점검' 칸에 다시 써요.</li>
+    <li><b>⑨ 받아쓰기</b> — 정답지의 단어와 문장을 자연스러운 속도로 두 번 불러 줘요. 혼자 할 때는 QR을 찍어 들어요. 틀린 단어는 '자기 점검' 칸에 다시 써요.</li>
+    <li><b>⑩~⑭ 쓰기</b> — 그림 → 단어 → 문장 순서로 점점 스스로 쓰는 양을 늘려요. ⑬은 정답이 없어요. 오늘 단어를 넣었으면 칭찬해 주세요. ⑭는 B쪽에서 틀린 단어를 반복해서 써요.</li>
+    <li><b>QR</b> — 휴대폰 카메라로 찍으면 '단어 듣기'는 구글 번역 발음, '소리 영상'은 유튜브 파닉스 영상 검색이 열려요(인터넷 필요).</li>
   </ul></div>
 
   <div class="gbox"><h3>기호 안내</h3>
@@ -566,7 +668,7 @@ def toc(rows):
         if r["page"] in SET_END:
             trs.append(f'<tr class="rvrow"><td></td><td colspan="3">↳ {r["set"]} 총복습 (2쪽)</td></tr>')
     return f"""
-<section class="page"><h1 class="pt">목차 <small>각 소리는 A(배우기)·B(연습) 2쪽</small></h1>
+<section class="page"><h1 class="pt">목차 <small>각 소리는 A(배우기)·B(연습)·C(쓰기) 3쪽</small></h1>
 <table class="toc"><tr><th>쪽</th><th>세트</th><th>소리</th><th>묶음 기준</th></tr>{''.join(trs)}</table></section>"""
 
 
@@ -581,6 +683,7 @@ def key(rows, reviews):
             a3 = "③ ○ — <span class='en'>" + html.escape(", ".join(r["find"][1])) + "</span> (나머지 ✕)"
         a7 = "⑦ " + html.escape(", ".join(f"{w} = {GLOSS[w.lower()]}" for w in r["match"][0]))
         a8 = "⑧ <span class='en'>" + html.escape(", ".join(a for _, a in r["sent"][0])) + "</span>"
+        a8 += " &nbsp; ⑩ <span class='en'>" + html.escape(", ".join(r["pictures"])) + "</span>"
         a9 = ("⑥·⑨ 단어 — <b class='en'>" + html.escape(", ".join(r["dict"][:5])) + "</b>"
               "<br>⑨ 문장 — <b class='en'>" + html.escape(r["dict_sentence"]) + "</b>")
         blocks.append(
@@ -614,7 +717,7 @@ def build():
     reviews = build_reviews(rows)
     body = [cover(rows), guide(), toc(rows)]
     for r in rows:
-        body += [page_a(r), page_b(r)]
+        body += [page_a(r), page_b(r), page_c(r)]
         if r["page"] in SET_END:
             body.append(review_pages(r["set"], reviews[r["set"]]))
     body.append(key(rows, reviews))
