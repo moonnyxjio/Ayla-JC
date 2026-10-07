@@ -17,6 +17,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import build_workbook as WB  # noqa: E402
 import build_eumga as EG  # noqa: E402
+import cover as CV  # noqa: E402
+
+COVER = os.environ.get("COVER", "v1")   # v1 | v2 | v3 — see cover.py / cover_preview.pdf
 
 OUT_HTML = os.path.join(HERE, "phonics_combined_workbook.html")
 OUT_PDF = os.path.join(HERE, "phonics_combined_workbook.pdf")
@@ -64,10 +67,8 @@ def build():
             lessons.append(eg(pg))
             tests[r["set"]] = pool
 
-    cover = WB.cover(rows)
-    cover = patch(cover, "<i>A B C</i>", "<i>A 음 B C</i>")
-    cover = patch(cover, "진도표 — 끝낸 A·B·C에 색칠하거나", "진도표 — 끝낸 A·음가·B·C에 색칠하거나")
-    cover = cover.replace("복습</span>", "복습·Test</span>")
+    n_words = sum(len(r["read"]) for r in rows)
+    cover = getattr(CV, f"cover_{COVER}")(n_words, 0) + CV.tracker(rows)
 
     guide = WB.guide()
     guide = patch(guide, "<h3>하루 10~15분, 한 소리를 사흘에 걸쳐</h3>",
@@ -82,10 +83,10 @@ def build():
     toc = patch(toc, "각 소리는 A(배우기)·B(연습)·C(쓰기) 3쪽", "각 소리는 A(배우기)·음가 쓰기·B(연습)·C(쓰기) 4쪽")
     toc = toc.replace("총복습 (2쪽)", "총복습 (2쪽) + Phonics Test")
 
-    body = [wb(cover), wb(guide), eg(EG.guide(rows)), wb(toc)] + lessons + [
+    body = [cover, wb(guide), eg(EG.guide(rows)), wb(toc)] + lessons + [
         wb(WB.key(rows, reviews)), eg(EG.key(rows, tests))]
 
-    css = []
+    css = [CV.CSS]
     for path, prefix in ((WB.CSS_FILE, ".wb"), (EG.CSS_FILE, ".eg")):
         with open(path, encoding="utf-8") as f:
             css.append(scope_css(f.read(), prefix))
