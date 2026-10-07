@@ -137,7 +137,7 @@ def lesson_page(r):
   <h3 class="c3"><span class="tag">C</span> 듣고 쓰기 <small>선생님이 불러 주는 단어를 영어로 쓰고, 음가와 합쳐 읽기까지 써요. (불러 줄 단어는 정답지에)</small></h3>
   <div class="dgrid">{dic}</div>
   <div class="ft"><span>Phonics 음가 Workbook · {html.escape(r['set'])} {html.escape(WB.SETS[r['set']][0])}</span>
-    <span>{html.escape(r['rule'])}</span><span>{p} / 42</span></div>
+    <span>{html.escape(r['rule'])}</span><span>{p} 음가 / 42</span></div>
 </section>"""
 
 
