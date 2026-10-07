@@ -18,6 +18,9 @@ VOW = "ㅏㅐㅑㅒㅓㅔㅕㅖㅗㅘㅙㅚㅛㅜㅝㅞㅟㅠㅡㅢㅣ"
 COD = ["", "ㄱ", "ㄲ", "ㄳ", "ㄴ", "ㄵ", "ㄶ", "ㄷ", "ㄹ", "ㄺ", "ㄻ", "ㄼ", "ㄽ", "ㄾ", "ㄿ", "ㅀ", "ㅁ",
        "ㅂ", "ㅄ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"]
 
+# au / aw 음가 (학원 기준). "ㅏㅜ" = 아우, "ㅗ" = 오
+AU_AW = "ㅏㅜ"
+
 SHORT = {"a": "ㅐ", "e": "ㅔ", "i": "ㅣ", "o": "ㅏ", "u": "ㅓ"}
 LONG = {"a": "ㅔㅣ", "e": "ㅣ", "i": "ㅏㅣ", "o": "ㅗㅜ", "u": "ㅠ"}
 CONS = {"b": "ㅂ", "d": "ㄷ", "f": "ㅍ", "g": "ㄱ", "h": "ㅎ", "j": "ㅈ", "k": "ㅋ", "l": "ㄹ", "m": "ㅁ",
@@ -161,7 +164,7 @@ def tokenize(page, word):
         if two in ("oi", "oy"):
             out.append((two, [("V", "ㅗ", True), ("V", "ㅣ", True)])); i += 2; continue
         if two in ("au", "aw"):
-            out.append((two, [("V", "ㅗ", True)])); i += 2; continue
+            out.append((two, [("V", v, True) for v in AU_AW])); i += 2; continue
         if two in ("ar",) and nxt(i + 2) not in "aeiouy":
             out.append((two, [("V", "ㅏ", True), ("R",)])); i += 2; continue
         if two == "or" and nxt(i + 2) not in "aeiouy":
