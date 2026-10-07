@@ -56,12 +56,12 @@ CELL_OVERRIDE = {
     "preview": ([("p", "ㅍ"), ("r", "ㄹ"), ("e", "ㅣ"), ("v", "ㅂ"), ("iew", "ㅠ")], "프리뷰"),
     "preschool": ([("p", "ㅍ"), ("r", "ㄹ"), ("e", "ㅣ"), ("s", "ㅅ"), ("ch", "ㅋ"), ("oo", "ㅜ"), ("l", "ㄹ")], "프리스쿨"),
     "useful": ([("u", "유"), ("s", "ㅅ"), ("e", "×"), ("ful", "풀")], "유스풀"),
-    "hopeful": ([("h", "ㅎ"), ("o", "오우"), ("p", "ㅍ"), ("e", "×"), ("ful", "풀")], "호우프풀"),
+    "hopeful": ([("h", "ㅎ"), ("o", "ㅗ"), ("p", "ㅍ"), ("e", "×"), ("ful", "풀")], "호프풀"),
     "careful": ([("c", "ㅋ"), ("are", "에어r"), ("ful", "풀")], "케어풀"),
     "redo": ([("r", "ㄹ"), ("e", "ㅣ"), ("d", "ㄷ"), ("o", "ㅜ")], "리두"),
     "undo": ([("u", "ㅓ"), ("n", "ㄴ"), ("d", "ㄷ"), ("o", "ㅜ")], "언두"),
     "misuse": ([("m", "ㅁ"), ("i", "ㅣ"), ("s", "ㅅ"), ("u", "유"), ("s", "ㅈ"), ("e", "×")], "미스유즈"),
-    "comb": ([("c", "ㅋ"), ("o", "오우"), ("mb", "ㅁ")], "코움"),
+    "comb": ([("c", "ㅋ"), ("o", "ㅗ"), ("mb", "ㅁ")], "콤"),
     "watch": ([("w", "ㅜ"), ("a", "ㅏ"), ("tch", "치")], "와치"),
     "about": ([("a", "ㅓ"), ("b", "ㅂ"), ("ou", "아우"), ("t", "ㅌ")], "어바웃"),
     "sofa": ([("s", "ㅅ"), ("o", "오우"), ("f", "ㅍ"), ("a", "ㅓ")], "소우퍼"),
@@ -210,6 +210,21 @@ def tokenize(page, word):
         if c == "h" and i > 0 and w[i - 1] == "g":
             out.append((c, [])); i += 1; continue
         out.append((c, [("C", CONS.get(c, c), c)])); i += 1
+    return _long_o(out)
+
+
+def _long_o(gs):
+    """Long o says 오우 at the end of a syllable (go, snow, so-fa) but 오 before a consonant
+    in the same syllable (boat 보트, phone 폰, bowl 볼, hope-ful 호프풀)."""
+    LONG_O = [("V", "ㅗ", True), ("V", "ㅜ", True)]
+    out = []
+    for k, (g, ts) in enumerate(gs):
+        if ts == LONG_O:
+            rest = [t for _, tt in gs[k + 1:] for t in tt]     # silent letters contribute no tokens
+            closed = bool(rest) and rest[0][0] == "C" and (len(rest) == 1 or rest[1][0] != "V")
+            if closed:
+                ts = [("V", "ㅗ", True)]
+        out.append((g, ts))
     return out
 
 

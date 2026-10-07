@@ -25,7 +25,7 @@ TIPS = {
     18: "Magic e: 끝의 e는 소리가 없지만 앞 모음이 자기 이름을 말하게 해요(kit → kite).",
     19: "ai와 ay는 둘 다 '에이'. 단어 중간엔 ai(rain), 끝엔 ay(day).",
     20: "ee와 ea는 둘 다 길게 '이—'(bee, sea).",
-    21: "oa와 ow는 '오우'. 중간엔 주로 oa(boat), 끝엔 ow(snow).",
+    21: "oa와 ow는 긴 o 소리. 끝에서는 '오우'(snow 스노우), 뒤에 자음이 오면 짧게 '오'(boat 보트). 중간엔 주로 oa, 끝엔 ow.",
     22: "igh, ie, 짧은 단어 끝의 y는 모두 '아이'(high, pie, my).",
     23: "두 음절 이상인 단어 끝의 y는 '이'(happy, baby).",
     24: "oo, ew, ue, ui는 모두 길게 '우—'(moon, new, blue, fruit).",

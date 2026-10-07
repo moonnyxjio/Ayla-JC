@@ -78,6 +78,8 @@ CSS = """
 .v3 .stripes div { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-left: 9mm; color: #fff; }
 .v3 .stripes b { font-family: 'Andika'; font-size: 34pt; line-height: 1; }
 .v3 .stripes span { font-size: 8pt; opacity: .9; margin-top: 1.5mm; }
+.v3 .stripes .dim { opacity: .28; }
+.v3 h1 .bk { font-size: 64pt; }
 .v3 .main { position: absolute; left: 76mm; right: 14mm; top: 34mm; }
 .v3 .kick { font-size: 10pt; letter-spacing: 2mm; color: #8A93A6; font-weight: 700; }
 .v3 h1 { margin: 4mm 0 0; font-size: 54pt; line-height: .95; }
@@ -148,18 +150,29 @@ def cover_v2(n_words, n_pages):
 </section>"""
 
 
-def cover_v3(n_words, n_pages):
-    stripes = "".join(f'<div style="background:{c}"><b>{t}</b><span>{s} · {html.escape(name)}</span></div>'
-                      for (t, s), (name, c) in zip(TILES, WB.SETS.values()))
+def cover_v3(n_words, n_pages, vol=None, n_lessons=42):
+    """vol=None: the whole book. vol=1..5: that Set's volume (its stripe stays bright, the others fade)."""
+    stripes = "".join(f'<div class="{"dim" if vol and k != vol else ""}" style="background:{c}"><b>{t}</b>'
+                      f'<span>{s} · {html.escape(name)}</span></div>'
+                      for k, ((t, s), (name, c)) in enumerate(zip(TILES, WB.SETS.values()), 1))
+    if vol:
+        name, col = list(WB.SETS.values())[vol - 1]
+        title = f'Phonics<br>Workbook <span class="bk" style="color:{col}">{vol}</span>'
+        sub = f"Set {vol} · {html.escape(name)}"
+        feat = (f"<b>{n_lessons}</b>개의 소리 · <b>4</b>단계 학습<br><b>1</b>회 Phonics Test<br>"
+                f"<b>{n_words}</b>개 단어 · 그림 · QR 발음")
+    else:
+        title, sub = "Phonics<br>Workbook", "소리로 읽고,<br>음가로 쓰는 파닉스"
+        feat = f"<b>42</b>개의 소리 · <b>4</b>단계 학습<br><b>5</b>회 Phonics Test<br><b>{n_words}</b>개 단어 · 그림 · QR 발음"
     return f"""
 <section class="cv v3">
   <div class="stripes en">{stripes}</div>
   <div class="main">
     <div class="kick">PHONICS WORKBOOK</div>
-    <h1 class="en">Phonics<br>Workbook</h1>
-    <div class="sub">소리로 읽고,<br>음가로 쓰는 파닉스</div>
+    <h1 class="en">{title}</h1>
+    <div class="sub">{sub}</div>
     <div class="rule"></div>
-    <div class="feat"><b>42</b>개의 소리 · <b>4</b>단계 학습<br><b>5</b>회 Phonics Test<br><b>{n_words}</b>개 단어 · 그림 · QR 발음</div>
+    <div class="feat">{feat}</div>
   </div>
   <div class="ln" style="top:236mm">Name<span></span></div>
   <div class="ln" style="top:250mm">Class<span></span></div>
@@ -169,6 +182,8 @@ def cover_v3(n_words, n_pages):
 def tracker(rows):
     sets = []
     for s, (name, col) in WB.SETS.items():
+        if not any(r["set"] == s for r in rows):
+            continue
         cells = "".join(
             f'<div class="ls"><b>{r["page"]}</b><span><i></i><i></i><i></i><i></i></span></div>'
             for r in rows if r["set"] == s)

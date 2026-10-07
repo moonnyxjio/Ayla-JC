@@ -214,6 +214,8 @@ def guide(rows):
             ch = " · ".join(f"<b class='en'>{html.escape(g)}</b> {html.escape(ja)}"
                             for g, ja in chart(r["page"], r["eumga"][1] + [r["eumga"][0]]))
             cells.append(f'<tr><td class="pg">{r["page"]}</td><td>{ch}</td></tr>')
+        if not cells:
+            continue
         master.append(f'<div class="ms" style="--c:{col}"><div class="mh">{s} · {name}</div><table>{"".join(cells)}</table></div>')
     return f"""
 <section class="page guide">
@@ -224,7 +226,7 @@ def guide(rows):
     <div class="st"><b>③</b> → 에 <b>합쳐 읽은 소리</b>를 한글로 써요. (선셋, 래빗)</div>
     <div class="st"><b>기호</b> × 소리 없는 글자(Magic e, kn의 k) · <span class="en">r</span> 혀를 마는 r 소리(ar = ㅏr)</div>
   </div>
-  <p class="note">짧은 모음 a=ㅐ e=ㅔ i=ㅣ o=ㅏ u=ㅓ · 긴 모음은 이름 소리(a=에이 i=아이 o=오우 u=유 e=이).
+  <p class="note">짧은 모음 a=ㅐ e=ㅔ i=ㅣ o=ㅏ u=ㅓ · 긴 모음은 이름 소리(a=에이 i=아이 u=유 e=이). 긴 o는 실제 발음대로: 끝소리면 오우(go 고우, snow 스노우), 뒤에 자음이 붙으면 오(boat 보트, phone 폰).
   받침: 짧은 모음 뒤 끝소리 t·k·p는 ㅅ·ㄱ·ㅂ 받침(cat 캣, duck 덕, cup 컵), n·m·l·ng는 받침(sun 선), 그 밖은 ㅡ를 붙여요(dog 다그, bus 버스).</p>
   <h2>전체 음가표</h2>
   <div class="master">{''.join(master)}</div>
