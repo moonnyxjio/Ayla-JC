@@ -110,3 +110,9 @@ h3.c3 { margin-top: 3mm; }
 .dl .num { width: 5mm; text-align: right; font-size: 10pt; }
 .dl .wl { flex: 1.3; border-bottom: 0.35mm solid #9aa3b5; height: 8mm; }
 .dl .wl.s { flex: 0.8; }
+.rv .hint { font-size: 8pt; color: #4a5468; white-space: nowrap; max-width: 24mm; overflow: hidden; text-overflow: ellipsis; }
+h3 .tag { white-space: nowrap; }
+/* fit: keep the footer inside the page */
+.grid { gap: 1.8mm 8mm; }
+.dl .wl { height: 7mm; }
+.dgrid { gap: 1.8mm; }

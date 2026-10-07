@@ -68,8 +68,11 @@ def item(page, n, word, filled=False):
 
 def reverse_item(page, n, word):
     boxes = "".join(f'<div class="rj">{html.escape(ja)}</div>' for _, ja in eumga(page, word))
+    w = word.lower()
+    hint = (WB.EMOJI.get(w, "") + " " + WB.GLOSS.get(w, "")).strip()
+    hint = f'<div class="hint">{html.escape(hint)}</div>' if hint else ""
     return f"""
-    <div class="rv"><div class="num">{n}</div><div class="rjs">{boxes}</div><div class="arrow">→</div><div class="wl"></div></div>"""
+    <div class="rv"><div class="num">{n}</div><div class="rjs">{boxes}</div>{hint}<div class="arrow">→</div><div class="wl"></div></div>"""
 
 
 def head(title, sub, color, score=10):
@@ -130,11 +133,11 @@ def lesson_page(r):
         "단어를 보고, 글자 아래 칸에 읽는 소리를 한글 음가로 쓰세요. 그리고 → 에 합쳐 읽은 소리를 쓰세요.", col, len(a))}
   <div class="row1"><div class="chart"><span class="lbl">오늘의 소리</span>{chips}</div>
     <div class="exbox">{ex}</div></div>
-  <h3><span class="tag">A</span> 음가 쓰기 <small>① 글자마다 음가 쓰기 → ② 두 음절 이상이면 선 긋기 → ③ 합쳐 읽기</small></h3>
+  <h3><span class="tag">음가 ①</span> 음가 쓰기 <small>① 글자마다 음가 쓰기 → ② 두 음절 이상이면 선 긋기 → ③ 합쳐 읽기</small></h3>
   <div class="grid">{items}</div>
-  <h3><span class="tag">B</span> 음가 보고 영어 단어 쓰기 <small>한글 음가를 보고 알맞은 영어 철자로 써요.</small></h3>
+  <h3><span class="tag">음가 ②</span> 음가 보고 영어 단어 쓰기 <small>한글 음가와 뜻을 보고 오늘 배운 철자로 써요.</small></h3>
   <div class="rgrid">{rev}</div>
-  <h3 class="c3"><span class="tag">C</span> 듣고 쓰기 <small>선생님이 불러 주는 단어를 영어로 쓰고, 음가와 합쳐 읽기까지 써요. (불러 줄 단어는 정답지에)</small></h3>
+  <h3 class="c3"><span class="tag">음가 ③</span> 듣고 쓰기 <small>선생님이 불러 주는 단어를 영어로 쓰고, 음가와 합쳐 읽기까지 써요. (불러 줄 단어는 정답지에)</small></h3>
   <div class="dgrid">{dic}</div>
   <div class="ft"><span>Phonics 음가 Workbook · {html.escape(r['set'])} {html.escape(WB.SETS[r['set']][0])}</span>
     <span>{html.escape(r['rule'])}</span><span>{p} 음가 / 42</span></div>
@@ -240,7 +243,7 @@ def key(rows, tests):
         al = " &nbsp;·&nbsp; ".join(f"{i}. {fmt(w)}" for i, w in enumerate(a, 1))
         bl = ", ".join(f"{i}. <span class='en'>{html.escape(w)}</span>" for i, w in enumerate(b, 1))
         cl = " &nbsp;·&nbsp; ".join(f"{i}. {fmt(w)}" for i, w in enumerate(c, 1))
-        blocks.append(f'<tr><td class="kp" style="color:{r["color"]}">{r["page"]}</td><td>A — {al}<br>B — {bl}<br>C 불러 주기 — {cl}</td></tr>')
+        blocks.append(f'<tr><td class="kp" style="color:{r["color"]}">{r["page"]}</td><td>① {al}<br>② {bl}<br>③ 불러 주기 — {cl}</td></tr>')
         if r["page"] in WB.SET_END:
             s = r["set"]
             tl = " &nbsp;·&nbsp; ".join(

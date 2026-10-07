@@ -224,3 +224,12 @@ table.key tr.rvrow td { background: #f6f7f9; }
 .pc-page .sec { margin-bottom: 2.6mm; }
 .pc-page .cp { margin-bottom: 2.6mm; }
 .gt td:nth-child(-n+2) { white-space: nowrap; }
+.wb table.toc td.pn { text-align: right; font-weight: 700; width: 10mm; }
+/* fit: keep the C-page footer inside the page */
+.gap2 { height: 3mm; }
+.pc-page .sec { margin-bottom: 2mm; }
+.pc-page .cp { margin-bottom: 2mm; }
+.mi.r { font-size: 9pt; line-height: 1.15; }
+.mi.r span:last-child { white-space: nowrap; }
+.duo { grid-template-columns: 0.95fr 1.05fr; }
+.fill .f .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

@@ -36,7 +36,7 @@ TIPS = {
     29: "er, ir, ur은 모두 같은 '어r'(her, bird, fur). 철자만 달라요.",
     30: "oi와 oy는 '오이'. 중간엔 oi(coin), 끝엔 oy(boy).",
     31: "ou와 ow는 다쳤을 때 '아우!'(out, cow).",
-    32: "au와 aw는 입을 동그랗게 '오—'(haul, saw). 끝에는 aw를 써요.",
+    32: "au와 aw는 같은 소리예요. 우리 교재 음가는 '아우'(saw=사우, haul=하울). 단어 끝에는 aw, 중간에는 주로 au를 써요.",
     33: "c, g 뒤에 e·i·y가 오면 부드러워져요: c는 '스'(city), g는 '즈'(gem).",
     34: "kn의 k, wr의 w, mb의 b, gn의 g는 숨은 글자 — 소리가 나지 않아요(knee, write, comb, gnat).",
     35: "강세 없는 모음은 힘을 빼고 '어'처럼 약하게(about = 어-바웃). 사전의 ə 기호예요.",

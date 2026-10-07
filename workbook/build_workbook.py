@@ -22,6 +22,7 @@ import segno
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
+from eumga import eumga as _eumga, tokenize as _tokenize  # noqa: E402
 from content import EMOJI, FRAMES, GLOSS, SENTENCES, SORT, SUPPLEMENT, SYLLABLES, TIPS  # noqa: E402
 
 SRC = os.path.join(HERE, "phonics_toc.xlsx")
@@ -189,6 +190,18 @@ def load_rows():
 
 
 # ---------------------------------------------------------------- activities
+def target_sounds(page, words):
+    """음가 of the graphemes that carry today's spelling, e.g. {'치'} for tch."""
+    out = set()
+    for w in words:
+        sp, pos = spans(page, w), 0
+        for (g, _), (_, ja) in zip(_tokenize(page, w), _eumga(page, w)):
+            if any(s < pos + len(g) and pos < e for s, e in sp) and ja != "×":
+                out.add(ja)
+            pos += len(g)
+    return out
+
+
 def build_lesson_data(rows):
     """Pre-compute every activity (and its answers) so pages and the key agree."""
     by_page = {r["page"]: r for r in rows}
@@ -196,6 +209,20 @@ def build_lesson_data(rows):
         p = r["page"]
         rng = random.Random(p * 7919)
         read = [w for w, _ in r["read"]]
+
+        # B-page practice words (trace + fill): the TOC dictation words, topped up to 5 with today's words
+        extra = [w for w in read if w not in r["dict"] and spans(p, w)]
+        cand = r["dict"] + extra
+        if p in SORT:                      # mix spellings (mis-/pre-, ai/ay ...) so ⑥ is not one repeated answer
+            groups = {}
+            for w in cand:
+                groups.setdefault(classify(p, w), []).append(w)
+            cand = []
+            while any(groups.values()):
+                for g in list(groups):
+                    if groups[g]:
+                        cand.append(groups[g].pop(0))
+        r["practice"] = cand[:5]
 
         # blend: read words not already used in the writing activities
         pool = [w for w in read if w not in r["dict"]]
@@ -214,9 +241,13 @@ def build_lesson_data(rows):
             r["sort"] = (cols, picked, {c: [w for w in picked if classify(p, w) == c] for c in cols})
         else:
             today = [w for w in read if spans(p, w)][:6]
+            same = target_sounds(p, today)
             review = []
             for q in range(p - 1, 0, -1):
                 for w, _ in by_page[q]["read"]:
+                    # a review word must not contain today's sound under another spelling (much vs. match)
+                    if any(ja in same for _, ja in _eumga(q, w)):
+                        continue
                     if not spans(p, w) and w not in review and w not in read and len(review) < 4:
                         review.append(w)
                 if len(review) >= 4:
@@ -253,7 +284,16 @@ def build_lesson_data(rows):
         bank = [a for _, a in sents] + distract[:1]
         rng.shuffle(bank)
         r["sent"] = (sents, bank)
-        r["dict_sentence"] = sents[0][0].replace("___", sents[0][1])
+        # dictation: words that are NOT printed on the B page, topped up from the previous lesson
+        on_b = {w.lower() for w in r["practice"] + match + bank}
+        dic = [w for w in read if w.lower() not in on_b]
+        prev = by_page.get(p - 1)
+        if prev:
+            dic += [w for w in prev["dict"] if w.lower() not in on_b and w not in dic]
+        r["dictation"] = dic[:5]
+        # dictation sentence: last lesson's second sentence (spaced review, not visible on the page)
+        src = SENTENCES[p - 1][1] if p > 1 else ("An ant is on the ___.", "egg")
+        r["dict_sentence"] = src[0].replace("___", src[1])
         r["full_sentences"] = [t.replace("___", a) for t, a in sents]
 
         # C page: picture writing (emoji first, then meaning-only), then copy-writing words
@@ -472,7 +512,7 @@ def page_a(r):
                      f'<div class="review">{rv}</div>')
     else:
         review = sec(4, "소리로 말하기", "알파벳 이름(에이, 이…)이 아니라 '소리'로 말해 봐요.",
-                     '<div class="review"><div class="rv"><span class="en">a /æ/ · e /ɛ/ · i /ɪ/ · o /ɒ/ · u /ʌ/</span>'
+                     '<div class="review"><div class="rv"><span class="en">a 애 · e 에 · i 이 · o 아 · u 어</span>'
                      '<span class="ck">○○○</span></div></div>')
 
     return f"""
@@ -483,7 +523,7 @@ def page_a(r):
 def page_b(r):
     p = r["page"]
     rows = []
-    for w in r["dict"][:5]:
+    for w in r["practice"]:
         width = max(46, len(w) * 8.6 + 12)
         rows.append(f'<div class="row"><div class="g g1"></div><div class="g g2"></div><div class="g g3"></div>'
                     f'<div class="g g4"></div><div class="word">{html.escape(w)}</div>'
@@ -491,10 +531,11 @@ def page_b(r):
     trace = sec(5, "따라 쓰기", "회색 글자를 따라 쓰고, 점선 오른쪽에 두 번 더 써요.", "".join(rows), "trace")
 
     fills = []
-    for i, w in enumerate(r["dict"][:5], 1):
+    for i, w in enumerate(r["practice"], 1):
         sp = spans(p, w)
         t = render(w, sp, "blank") if sp else html.escape(w)
-        fills.append(f'<div class="f"><div class="t en">{t}</div><div class="n">{i}</div></div>')
+        gl = GLOSS.get(w.lower(), "")          # meaning hint: s□□ is "see" (보다) not "sea" (바다)
+        fills.append(f'<div class="f"><div class="t en">{t}</div><div class="n">{i}{" · " + html.escape(gl) if gl else ""}</div></div>')
     fill = sec(6, "빈칸 채우기", f"힌트 소리: <b class='hi en'>{html.escape(r['sound'])}</b>",
                f'<div class="fill">{"".join(fills)}</div>')
 
@@ -514,9 +555,10 @@ def page_b(r):
     {sec(8, "문장 완성", "빈칸에 단어를 쓰고 두 번 읽어요.", f'<div class="bank2">{bankh}</div>{sl}')}
   </div>"""
 
-    lines = "".join(f'<div class="d">{i}.</div>' for i in range(1, 6))
-    dq = qr(listen_url(r["dict"][:5] + [r["dict_sentence"]]), "혼자 받아쓰기", "QR로 듣고 써요")
-    dictation = sec(9, "받아쓰기", "단어 5개와 문장 1개를 듣고 써요. (어른이 불러 주거나 QR로 들어요)",
+    nd = len(r["dictation"])
+    lines = "".join(f'<div class="d">{i}.</div>' for i in range(1, nd + 1))
+    dq = qr(listen_url(r["dictation"] + [r["dict_sentence"]]), "혼자 받아쓰기", "QR로 듣고 써요")
+    dictation = sec(9, "받아쓰기", f"이 쪽에 없는 단어 {nd}개와 지난 시간 문장 1개를 듣고 써요. (어른이 불러 주거나 QR로 들어요)",
                     f'<div class="dwrap"><div class="dict">{lines}<div class="d full">문장.</div></div>{dq}</div>')
 
     check = """
@@ -684,7 +726,8 @@ def key(rows, reviews):
         a7 = "⑦ " + html.escape(", ".join(f"{w} = {GLOSS[w.lower()]}" for w in r["match"][0]))
         a8 = "⑧ <span class='en'>" + html.escape(", ".join(a for _, a in r["sent"][0])) + "</span>"
         a8 += " &nbsp; ⑩ <span class='en'>" + html.escape(", ".join(r["pictures"])) + "</span>"
-        a9 = ("⑥·⑨ 단어 — <b class='en'>" + html.escape(", ".join(r["dict"][:5])) + "</b>"
+        a9 = ("⑥ <span class='en'>" + html.escape(", ".join(r["practice"])) + "</span>"
+              " &nbsp; ⑨ 불러 줄 단어 — <b class='en'>" + html.escape(", ".join(r["dictation"])) + "</b>"
               "<br>⑨ 문장 — <b class='en'>" + html.escape(r["dict_sentence"]) + "</b>")
         blocks.append(
             f'<tr><td class="kp" style="color:{r["color"]}">{r["page"]}</td><td>{a9}<br>{a3}<br>{a7}<br>{a8}</td></tr>')

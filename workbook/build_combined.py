@@ -19,7 +19,7 @@ import build_workbook as WB  # noqa: E402
 import build_eumga as EG  # noqa: E402
 import cover as CV  # noqa: E402
 
-COVER = os.environ.get("COVER", "v1")   # v1 | v2 | v3 — see cover.py / cover_preview.pdf
+COVER = os.environ.get("COVER", "v3")   # v1 | v2 | v3 — see cover.py / cover_preview.pdf
 
 OUT_HTML = os.path.join(HERE, "phonics_combined_workbook.html")
 OUT_PDF = os.path.join(HERE, "phonics_combined_workbook.pdf")
@@ -53,6 +53,40 @@ def eg(html):
     return f'<div class="eg">{html}</div>'
 
 
+FRONT = 5          # cover, tracker, guide, 음가 guide, contents
+PAGE_NUM_CSS = """
+body { counter-reset: pg; }
+section.cv, .wb section.page, .eg section.page { counter-increment: pg; }
+.wb section.page::after, .eg section.page::after { content: counter(pg); position: absolute; bottom: 2.6mm; left: 0; right: 0;
+  text-align: center; font: 700 7.5pt 'Noto Sans KR', sans-serif; color: #9aa3b5; }
+"""
+
+
+def start_page(page):
+    """Physical page where lesson `page` (1-42) starts: 4 pages per lesson, +3 after each set."""
+    sets_done = sum(1 for e in WB.SET_END if e < page)
+    return FRONT + 1 + 4 * (page - 1) + 3 * sets_done
+
+
+def contents(rows):
+    trs = []
+    for r in rows:
+        p = r["page"]
+        sp = start_page(p)
+        trs.append(
+            f'<tr><td>{p}</td><td><span class="chip" style="background:{r["color"]}">{r["set"]}</span></td>'
+            f'<td class="snd en" style="color:{r["color"]}">{WB.html.escape(r["sound"])}</td>'
+            f'<td>{WB.html.escape(r["rule"])}</td><td class="pn">{sp}</td></tr>')
+        if p in WB.SET_END:
+            trs.append(f'<tr class="rvrow"><td></td><td colspan="3">↳ {r["set"]} 총복습 2쪽 + Phonics Test</td>'
+                       f'<td class="pn">{sp + 4}</td></tr>')
+    key_start = start_page(42) + 4 + 3
+    trs.append(f'<tr class="rvrow"><td></td><td colspan="3">정답 · 불러 주기 · 음가 정답</td><td class="pn">{key_start}</td></tr>')
+    return f"""
+<section class="page"><h1 class="pt">목차 <small>각 소리는 A 배우기 → 음가 쓰기 → B 연습 → C 쓰기 (4쪽)</small></h1>
+<table class="toc"><tr><th>단계</th><th>세트</th><th>소리</th><th>묶음 기준</th><th>쪽</th></tr>{''.join(trs)}</table></section>"""
+
+
 def build():
     rows = WB.build_lesson_data(WB.load_rows())
     reviews = WB.build_reviews(rows)
@@ -79,14 +113,12 @@ def build():
     guide = patch(guide, "섞어 읽기 · 철자 고르기 · 받아쓰기 · 낱말 찾기 · 실력 체크",
                   "섞어 읽기 · 철자 고르기 · 받아쓰기 · 낱말 찾기 · 실력 체크 → <b>Phonics Test</b>(음가 10문항)")
 
-    toc = WB.toc(rows)
-    toc = patch(toc, "각 소리는 A(배우기)·B(연습)·C(쓰기) 3쪽", "각 소리는 A(배우기)·음가 쓰기·B(연습)·C(쓰기) 4쪽")
-    toc = toc.replace("총복습 (2쪽)", "총복습 (2쪽) + Phonics Test")
+    toc = contents(rows)
 
     body = [cover, wb(guide), eg(EG.guide(rows)), wb(toc)] + lessons + [
         wb(WB.key(rows, reviews)), eg(EG.key(rows, tests))]
 
-    css = [CV.CSS]
+    css = [CV.CSS, PAGE_NUM_CSS]
     for path, prefix in ((WB.CSS_FILE, ".wb"), (EG.CSS_FILE, ".eg")):
         with open(path, encoding="utf-8") as f:
             css.append(scope_css(f.read(), prefix))
