@@ -477,11 +477,17 @@ def page_a(r):
 
     bl = []
     for w in r["blend"]:
-        parts = "".join(f'<span class="chunk{" silent" if silent else ""}">{html.escape(c)}</span>'
-                        for c, silent in chunks(p, w))
-        bl.append(f'<div class="bl"><div class="parts en">{parts}</div><div class="arr">→</div><div class="wl"></div></div>')
+        sp, off, parts = spans(p, w), 0, []
+        for c, silent in chunks(p, w):
+            # colour today's spelling inside each box (the schwa vowel on p35, -le on p36, ai/ay ...)
+            sub = [(max(s, off) - off, min(e, off + len(c)) - off) for s, e in sp if s < off + len(c) and off < e]
+            parts.append(f'<span class="chunk{" silent" if silent else ""}">{render(c, sub)}</span>')
+            off += len(c)
+        bl.append(f'<div class="bl"><div class="parts en">{"".join(parts)}</div><div class="arr">→</div><div class="wl"></div></div>')
     hint = ("칸마다 소리를 하나씩 말하고, 빠르게 합쳐 읽은 뒤 단어를 써요." if p < 35
-            else "덩어리(음절·어미)를 하나씩 읽고, 합쳐 읽은 뒤 단어를 써요.")
+            else "칸 = 음절(어미)이에요. 한 칸씩 읽고, 합쳐 읽은 뒤 단어를 써요.")
+    if p == 35:
+        hint += " 색 글자는 힘을 빼고 '어'로 약하게(슈와)."
     if p == 18:
         hint += " 회색 e는 소리 없는 Magic e!"
     blend = sec(2, "소리 블렌딩", hint, f'<div class="blend">{"".join(bl)}</div>')
